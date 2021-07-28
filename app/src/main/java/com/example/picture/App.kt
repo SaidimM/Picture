@@ -10,8 +10,8 @@ class App: BaseApplication() {
         Utils.init(this)
         UnsplashPhotoPicker.init(
             this,
-            "your access key",
-            "your secret key"
+            "Cr8mPVWJ9Rx8TjyKMVK9VyIStA9KAKRnr7PApzTtFRI",
+            "svdtbTCsgdYbtxGtWMq8RGnXEgN0mjebxhHeoiozxnU"
             /* optional page size (number of photos per page) */
         )
     }

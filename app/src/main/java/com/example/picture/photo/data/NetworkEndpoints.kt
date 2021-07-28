@@ -1,7 +1,5 @@
 package com.example.picture.photo.data
 
-import com.unsplash.pickerandroid.photopicker.data.SearchResponse
-import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
 import io.reactivex.Completable
 import io.reactivex.Observable
 import retrofit2.Response
@@ -14,7 +12,7 @@ import retrofit2.http.Url
  */
 interface NetworkEndpoints {
 
-    @GET("collections/317099/photos")
+    @GET("photos")
     fun loadPhotos(
         @Query("client_id") clientId: String,
         @Query("page") page: Int,

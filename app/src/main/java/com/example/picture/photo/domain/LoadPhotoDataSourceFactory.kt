@@ -1,9 +1,9 @@
-package com.unsplash.pickerandroid.photopicker.domain
+package com.example.picture.photo.domain
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import com.example.picture.photo.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.example.picture.photo.data.UnsplashPhoto
 
 /**
  * Android paging library data source factory.

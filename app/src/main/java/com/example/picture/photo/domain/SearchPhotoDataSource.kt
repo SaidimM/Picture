@@ -1,11 +1,11 @@
-package com.unsplash.pickerandroid.photopicker.domain
+package com.example.picture.photo.domain
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.example.picture.photo.UnsplashPhotoPicker
 import com.example.picture.photo.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
-import com.unsplash.pickerandroid.photopicker.data.SearchResponse
+import com.example.picture.photo.data.UnsplashPhoto
+import com.example.picture.photo.data.SearchResponse
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import retrofit2.Response

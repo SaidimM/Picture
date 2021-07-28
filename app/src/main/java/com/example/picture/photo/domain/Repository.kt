@@ -1,4 +1,4 @@
-package com.unsplash.pickerandroid.photopicker.domain
+package com.example.picture.photo.domain
 
 import android.net.Uri
 import android.util.Log
@@ -6,7 +6,7 @@ import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
 import com.example.picture.photo.UnsplashPhotoPicker
 import com.example.picture.photo.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.example.picture.photo.data.UnsplashPhoto
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable

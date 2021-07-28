@@ -2,6 +2,7 @@ package com.example.picture.base.ui.page
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

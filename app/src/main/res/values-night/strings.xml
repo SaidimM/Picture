@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="network_not_good">网络不给力</string>
+    <string name="photo">photo</string>
+    <string name="checked">checked</string>
+    <string name="download">下载</string>
 </resources>

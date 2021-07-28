@@ -1,4 +1,4 @@
-package com.unsplash.pickerandroid.photopicker.data
+package com.example.picture.photo.data
 
 data class SearchResponse(
     val total: Int,

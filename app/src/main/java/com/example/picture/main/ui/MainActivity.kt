@@ -2,22 +2,27 @@ package com.example.picture.main.ui
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import com.example.picture.R
 import com.example.picture.base.ui.page.BaseFragment
+import com.example.picture.base.utils.BarUtils
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 
 class MainActivity : AppCompatActivity(){
-    private val cardView: CardView? = null
+    private var cardView: CardView? = null
     private lateinit var mDrawerLayout: DrawerLayout
     private var fragments: ArrayList<BaseFragment> = ArrayList()
     private var fIndex: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        BarUtils.setStatusBarColor(this, Color.TRANSPARENT)
+        BarUtils.setStatusBarLightMode(this, true)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initView()
@@ -27,6 +32,7 @@ class MainActivity : AppCompatActivity(){
         fragments.add(UnsplashPhotoFragment())
         mDrawerLayout = findViewById(R.id.drawer_layout)
         mDrawerLayout.setScrimColor(Color.TRANSPARENT)
+        cardView = findViewById(R.id.card_view)
         mDrawerLayout.addDrawerListener(object : DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 val mContent = mDrawerLayout.getChildAt(0)
@@ -62,5 +68,8 @@ class MainActivity : AppCompatActivity(){
         transaction.replace(R.id.container, fragments[index])
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+    fun openDrawer(){
+        mDrawerLayout.openDrawer(GravityCompat.START)
     }
 }

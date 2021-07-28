@@ -1,10 +1,10 @@
-package com.unsplash.pickerandroid.photopicker.domain
+package com.example.picture.photo.domain
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.example.picture.photo.UnsplashPhotoPicker
 import com.example.picture.photo.data.NetworkEndpoints
-import com.unsplash.pickerandroid.photopicker.data.UnsplashPhoto
+import com.example.picture.photo.data.UnsplashPhoto
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import retrofit2.Response
@@ -39,7 +39,7 @@ class LoadPhotoDataSource(private val networkEndpoints: NetworkEndpoints) : Page
                     // we push the result on the paging callback
                     // we update the network state to success
                     if (response != null && response.isSuccessful) {
-                        lastPage = response.headers().get("x-total")?.toInt()?.div(params.requestedLoadSize)
+                        lastPage = response.headers()["x-total"]?.toInt()?.div(params.requestedLoadSize)
                         callback.onResult(response.body()!!, null, 2)
                         networkState.postValue(NetworkState.SUCCESS)
                     }

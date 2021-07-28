@@ -1,4 +1,4 @@
-package com.unsplash.pickerandroid.photopicker.domain
+package com.example.picture.photo.domain
 
 /*
 This has been copied from the Android paging library sample
