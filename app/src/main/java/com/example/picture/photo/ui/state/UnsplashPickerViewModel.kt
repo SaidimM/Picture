@@ -84,17 +84,18 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
     fun download(photo: UnsplashPhoto) {
         repository.trackDownload(photo.links.download_location)
         doAsync {
-            DownloadMain.start(photo.urls.raw)
+//            DownloadMain.start(photo.urls.raw)
             ConcurrentDownLoad
                 .builder()
                 // 设置URL
-                .setUrl(photo.urls.full)
+                .setUrl(photo.urls.raw)
                 // 设置线程每次请求的块大小 (5M)
                 .setBlockSize(1024L * 5)
                 // 设置线程数量
                 .setThreadCount(5)
                 // 设置保存路径
-                .setPath(Environment.DIRECTORY_DOWNLOADS)
+                .setPath(Environment.getExternalStorageDirectory().absolutePath +
+                        "/Download/picture" + photo.user.name + photo.description + ".jpg")
                 // 设置存在是否删除(如果设置 setKeepOnIfDisconnect(true) 则失效)
                 .setDeleteIfExist(true)
                 // 是否支持断点下载

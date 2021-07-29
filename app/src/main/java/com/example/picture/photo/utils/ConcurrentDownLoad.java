@@ -9,14 +9,22 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -338,7 +346,7 @@ public class ConcurrentDownLoad {
         StringBuilder builder = new StringBuilder(1024);
         builder.append(startTime).append("\r\n");
         this.paces.forEach(v -> builder.append(v.startIndex).append("-").append(v.endIndex).append("\r\n"));
-        Files.write(keepOnPath, builder.toString().getBytes(), StandardOpenOption.WRITE);
+        Files.write(keepOnPath, builder.toString().getBytes(), StandardOpenOption.CREATE_NEW);
 //        Files.writeString(keepOnPath, builder.toString());
     }
 

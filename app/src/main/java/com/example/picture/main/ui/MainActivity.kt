@@ -1,11 +1,15 @@
 package com.example.picture.main.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
+import android.util.Log
 import android.view.View
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
@@ -15,6 +19,12 @@ import com.example.picture.base.utils.BarUtils
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 
 class MainActivity : AppCompatActivity(){
+    private val PERMISSIONS_STORAGE = arrayOf<String>(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    private val REQUEST_PERMISSION_CODE = 1
+
     private var cardView: CardView? = null
     private lateinit var mDrawerLayout: DrawerLayout
     private var fragments: ArrayList<BaseFragment> = ArrayList()
@@ -24,6 +34,9 @@ class MainActivity : AppCompatActivity(){
         BarUtils.setStatusBarColor(this, Color.TRANSPARENT)
         BarUtils.setStatusBarLightMode(this, true)
         super.onCreate(savedInstanceState)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
+        }
         setContentView(R.layout.activity_main)
         initView()
     }
@@ -71,5 +84,18 @@ class MainActivity : AppCompatActivity(){
     }
     fun openDrawer(){
         mDrawerLayout.openDrawer(GravityCompat.START)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        @NonNull permissions: Array<String>,
+        @NonNull grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            for (i in permissions.indices) {
+                Log.i("MainActivity", "申请的权限为：" + permissions[i] + ",申请结果：" + grantResults[i])
+            }
+        }
     }
 }
