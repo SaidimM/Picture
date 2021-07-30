@@ -2,6 +2,7 @@ package com.example.picture.photo.ui.state
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.content.Intent
 import android.os.Build
 import android.os.Environment
 import android.text.TextUtils
@@ -32,6 +33,9 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
 
     private val mOpenDrawer = MutableLiveData<Boolean>()
     var openDrawer: LiveData<Boolean> = mOpenDrawer
+
+    private val _downloadUrl = MutableLiveData<UnsplashPhoto>()
+    var downloadUrl: LiveData<UnsplashPhoto> = _downloadUrl
 
     override fun getTag(): String {
         return UnsplashPickerViewModel::class.java.simpleName
@@ -79,33 +83,9 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
      *
      * @param photo photos
      */
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    @SuppressLint("NewApi")
     fun download(photo: UnsplashPhoto) {
         repository.trackDownload(photo.links.download_location)
-        doAsync {
-//            DownloadMain.start(photo.urls.raw)
-            ConcurrentDownLoad
-                .builder()
-                // 设置URL
-                .setUrl(photo.urls.raw)
-                // 设置线程每次请求的块大小 (5M)
-                .setBlockSize(1024L * 5)
-                // 设置线程数量
-                .setThreadCount(5)
-                // 设置保存路径
-                .setPath(Environment.getExternalStorageDirectory().absolutePath +
-                        "/Download/picture" + photo.user.name + photo.description + ".jpg")
-                // 设置存在是否删除(如果设置 setKeepOnIfDisconnect(true) 则失效)
-                .setDeleteIfExist(true)
-                // 是否支持断点下载
-                .setKeepOnIfDisconnect(true)
-                // 创建
-                .build()
-                // 开始
-                .start()
-
-        }
+        _downloadUrl.value = photo
     }
 
     fun openDrawer(){

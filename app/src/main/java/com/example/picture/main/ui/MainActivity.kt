@@ -1,47 +1,63 @@
 package com.example.picture.main.ui
 
 import android.Manifest
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.fragment.app.FragmentManager
+import com.example.picture.BR
 import com.example.picture.R
+import com.example.picture.base.dataBindings.DataBindingConfig
+import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.base.ui.page.BaseFragment
-import com.example.picture.base.utils.BarUtils
+import com.example.picture.main.state.MainActivityViewModel
+import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
+import com.example.picture.photo.ui.service.DownloadService
 
-class MainActivity : AppCompatActivity(){
+
+class MainActivity : BaseActivity() {
     private val PERMISSIONS_STORAGE = arrayOf<String>(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
     private val REQUEST_PERMISSION_CODE = 1
 
+    private lateinit var viewModel: MainActivityViewModel
+
     private var cardView: CardView? = null
     private lateinit var mDrawerLayout: DrawerLayout
     private var fragments: ArrayList<BaseFragment> = ArrayList()
     private var fIndex: Int = 0
+    private lateinit var downloadBinder: DownloadService.DownloadBinder
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        BarUtils.setStatusBarColor(this, Color.TRANSPARENT)
-        BarUtils.setStatusBarLightMode(this, true)
         super.onCreate(savedInstanceState)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
         }
         setContentView(R.layout.activity_main)
         initView()
+        initService()
     }
 
-    private fun initView(){
+    private fun initView() {
         fragments.add(UnsplashPhotoFragment())
         mDrawerLayout = findViewById(R.id.drawer_layout)
         mDrawerLayout.setScrimColor(Color.TRANSPARENT)
@@ -72,8 +88,22 @@ class MainActivity : AppCompatActivity(){
 
             override fun onDrawerStateChanged(newState: Int) {}
         })
+        initMap()
         replaceFragment(0)
     }
+
+    fun initService() {
+        val intent = Intent(this, DownloadService::class.java)
+        startService(intent) //启动服务
+        bindService(intent, connection, BIND_AUTO_CREATE)
+    }
+
+    private fun initMap() {
+        val fragmentManager: FragmentManager = supportFragmentManager
+        val mapFragment = MenuFragment()
+        fragmentManager.beginTransaction().replace(R.id.nav_view, mapFragment).commit()
+    }
+
     fun replaceFragment(index: Int) {
         fIndex = index
         val fragmentManager = supportFragmentManager
@@ -82,7 +112,8 @@ class MainActivity : AppCompatActivity(){
         transaction.addToBackStack(null)
         transaction.commit()
     }
-    fun openDrawer(){
+
+    fun openDrawer() {
         mDrawerLayout.openDrawer(GravityCompat.START)
     }
 
@@ -98,4 +129,28 @@ class MainActivity : AppCompatActivity(){
             }
         }
     }
+
+    private val connection: ServiceConnection = object : ServiceConnection {
+        //创建一个ServiceConnection
+        override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+            //服务成功绑定时调用
+            downloadBinder = iBinder as DownloadService.DownloadBinder
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName) { //断开连接时调用
+        }
+    }
+
+    override fun initViewModel() {
+        viewModel = getActivityScopeViewModel(MainActivityViewModel::class.java)
+    }
+
+    override fun getDataBindingConfig(): DataBindingConfig {
+        return DataBindingConfig(R.layout.activity_main, BR.viewModel, viewModel)
+    }
+
+    fun download(photo: UnsplashPhoto) {
+        downloadBinder.startDownload(photo)
+    }
+
 }

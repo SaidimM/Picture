@@ -11,6 +11,8 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.picture.R
+import com.example.picture.main.state.MainActivityViewModel
+import com.example.picture.main.ui.MainActivity
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.state.UnsplashPickerViewModel
 import com.squareup.picasso.Picasso
@@ -23,7 +25,7 @@ import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
  * This deals with either a single or multiple selection list.
  */
 class UnsplashPhotoAdapter constructor(
-    context: Context,
+    private val context: Context,
     private val isMultipleSelection: Boolean,
     private val viewModel: UnsplashPickerViewModel
 ) :
@@ -72,21 +74,11 @@ class UnsplashPhotoAdapter constructor(
                 }
                 false
             }
-            holder.download.setOnClickListener { viewModel.download(photo) }
-        }
-    }
-
-    /**
-     * Getter for the selected images.
-     */
-    fun getImages(): ArrayList<UnsplashPhoto> {
-        mSelectedImages.clear()
-        for (index in mSelectedIndexes) {
-            currentList?.get(index)?.let {
-                mSelectedImages.add(it)
+            holder.download.setOnClickListener {
+                viewModel.download(photo)
+                (context as MainActivity).download(photo)
             }
         }
-        return mSelectedImages
     }
 
     companion object {
