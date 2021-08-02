@@ -1,22 +1,17 @@
 package com.example.picture.photo.ui.service
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Environment
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
-import androidx.databinding.ObservableField
 import com.example.picture.R
-import com.example.picture.main.ui.MainActivity
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.utils.ConcurrentDownLoad
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+
+import android.app.NotificationManager
 
 
 class DownloadService : Service() {
@@ -27,15 +22,17 @@ class DownloadService : Service() {
     private var msg: String = ""
     private var current: Long = 0L
     private var total: Long = 0L
-    private lateinit var notification: Notification
+    private lateinit var notificationBuilder: Notification.Builder
     private lateinit var notificationManager: NotificationManager
+    private val ID = "com.example.picture"
+    private val NAME = "channel one"
 
     override fun onBind(intent: Intent): IBinder {
         return mBinder
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(1,getNotification("Downloading ... ",0));
+        startForeground(1,getNotification(0))
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -65,35 +62,40 @@ class DownloadService : Service() {
                     // 开始
                     .start { msg, total, current, speed ->
                         if (total == 0L) return@start
-                        uiThread {
-                            //构建显示下载进度的通知，并触发通知
-                            getNotificationManager()!!.notify(
-                                1,
-                                getNotification("Downloading ...", (current / total).toInt())
-                            )
-                        }
+                        setProgress((current * 100 / total ).toInt())
+                        if (total == current) getNotificationManager().cancel(1)
                     }
             }
         }
-    }
-
-    private fun getNotificationManager(): NotificationManager? {
-        return getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    }
-
-    private fun getNotification(title: String, progress: Int): Notification? {
-        val intent = Intent(this, MainActivity::class.java)
-        val pi = PendingIntent.getActivity(this, 0, intent, 0)
-        val builder = NotificationCompat.Builder(this)
-        builder.setSmallIcon(R.mipmap.ic_launcher_round)
-        builder.setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-        builder.setContentIntent(pi)
-        builder.setContentTitle(title)
-        if (progress >= 0) {
-            //当progress大于或等0时才需要显示下载进度
-            builder.setContentText("$progress%")
-            builder.setProgress(100, progress, false)
+        fun destroy(){
+            this@DownloadService.onDestroy()
         }
-        return builder.build()
+    }
+
+    private fun getNotificationManager(): NotificationManager {
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_LOW)
+        manager.createNotificationChannel(channel)
+        return manager
+    }
+
+    private fun getNotification(progress: Int): Notification{
+        notificationBuilder = Notification.Builder(
+            this@DownloadService, ID) //设置通知左侧的小图标
+            .setSmallIcon(R.drawable.ic_download) //设置通知标题
+            .setContentTitle("downloading...") //设置通知内容
+            .setContentText("$progress%") //设置通知不可删除
+            .setOngoing(true) //设置显示通知时间
+            .setShowWhen(true) //设置点击通知时的响应事件
+            .setProgress(100, progress, false)
+        val notification = notificationBuilder.build()
+        getNotificationManager().notify(1, notification)
+        return notification
+    }
+
+    private fun setProgress(progress: Int){
+        notificationBuilder.setProgress(100, progress, false)
+        notificationBuilder.setContentTitle("$progress%")
+        getNotificationManager().notify(1, notificationBuilder.build())
     }
 }

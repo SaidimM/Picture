@@ -153,4 +153,10 @@ class MainActivity : BaseActivity() {
         downloadBinder.startDownload(photo)
     }
 
+    override fun finish() {
+        super.finish()
+        unbindService(connection)
+        stopService()
+        downloadBinder.destroy()
+    }
 }

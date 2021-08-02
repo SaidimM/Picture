@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
@@ -15,6 +16,7 @@ import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.main.ui.MainActivity
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.state.UnsplashPickerViewModel
+import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Picasso
 import com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
@@ -101,6 +103,6 @@ class UnsplashPhotoAdapter constructor(
     class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: AspectRatioImageView = view.item_unsplash_photo_image_view
         val txtView: TextView = view.item_unsplash_photo_text_view
-        val download: ImageView = view.download
+        val download: FrameLayout = view.download
     }
 }

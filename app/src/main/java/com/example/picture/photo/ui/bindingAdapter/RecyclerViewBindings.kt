@@ -1,6 +1,11 @@
 package com.example.picture.photo.ui.bindingAdapter
 
+import android.animation.Animator
+import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,12 +30,31 @@ fun onScroll(recyclerView: RecyclerView, constraintLayout: ConstraintLayout) {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            if (state == SCROLL_STATE_DRAGGING && dy >= 50)
-                constraintLayout.animate().setInterpolator(AccelerateDecelerateInterpolator())
-                    .setDuration(500).alpha(0f).start()
-            else if (!recyclerView.canScrollVertically(-1))
-                constraintLayout.animate().setInterpolator(AccelerateDecelerateInterpolator())
-                    .setDuration(500).alpha(1f).start()
+            if (state == SCROLL_STATE_DRAGGING && dy >= 50) {
+                constraintLayout.animate().setDuration(500).alpha(0f)
+                    .setInterpolator(DecelerateInterpolator())
+                    .setListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+                        override fun onAnimationEnd(animation: Animator) {
+                            constraintLayout.visibility = View.GONE
+                        }
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    }).start()
+            }
+            else if (!recyclerView.canScrollVertically(-1)
+                || dy < -50) {
+                constraintLayout.animate().setDuration(500).alpha(1f)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .setListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {
+                            constraintLayout.visibility = View.VISIBLE
+                        }
+                        override fun onAnimationEnd(animation: Animator) {}
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    }).start()
+            }
         }
     })
 }

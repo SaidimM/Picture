@@ -2,15 +2,27 @@
     <!-- Base application theme. -->
     <style name="Theme.Picture" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/gray_3</item>
+        <item name="colorPrimaryVariant">@color/gray_5</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor"
+            tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <item name="nav_host_fragment_container" type="id"/>
+    <declare-styleable name="DialogFragmentNavigator">
+        <attr name="android:name"/>
+    </declare-styleable>
+    <declare-styleable name="FragmentNavigator">
+        <attr name="android:name"/>
+    </declare-styleable>
+    <declare-styleable name="NavHostFragment">
+        <attr format="boolean" name="defaultNavHost"/>
+    </declare-styleable>
 </resources>
