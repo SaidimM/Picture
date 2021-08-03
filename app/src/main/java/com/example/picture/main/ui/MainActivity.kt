@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.IBinder
 import android.util.Log
 import android.view.View
@@ -17,19 +19,27 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.base.ui.page.BaseFragment
+import com.example.picture.base.utils.SnackbarUtils
 import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 import com.example.picture.photo.ui.service.DownloadService
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import androidx.core.content.FileProvider
+
+import android.os.Build
 
 
 class MainActivity : BaseActivity() {
-    private val PERMISSIONS_STORAGE = arrayOf<String>(
+    private val PERMISSIONS_STORAGE = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
@@ -54,7 +64,9 @@ class MainActivity : BaseActivity() {
         }
         setContentView(R.layout.activity_main)
         initView()
-        initService()
+        observe()
+        val intent = Intent(this, DownloadService::class.java)
+        bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
     private fun initView() {
@@ -90,12 +102,6 @@ class MainActivity : BaseActivity() {
         })
         initMap()
         replaceFragment(0)
-    }
-
-    fun initService() {
-        val intent = Intent(this, DownloadService::class.java)
-        startService(intent) //启动服务
-        bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
     private fun initMap() {
@@ -150,13 +156,46 @@ class MainActivity : BaseActivity() {
     }
 
     fun download(photo: UnsplashPhoto) {
-        downloadBinder.startDownload(photo)
+        downloadBinder.startDownload(photo, object : DownloadService.DownloadStatus{
+            override fun state(
+                photo: UnsplashPhoto,
+                msg: String,
+                total: Long,
+                current: Long,
+                speed: Long
+            ) {
+
+            }
+
+            override fun finish(photo: UnsplashPhoto) {
+                Snackbar.make(coordinator, "completed..",2000).setAction("check") {
+                    val intent2 = Intent(Intent.ACTION_VIEW)
+                    val uri = Uri.parse("file://" + Environment.getExternalStorageDirectory().absolutePath +
+                            "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg")
+                    intent2.setDataAndType(uri, "image/*")
+                    intent2.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    intent2.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    intent2.setDataAndType(uri, "application/vnd.android.package-archive")
+                    startActivity(intent2)
+                }.show()
+            }
+        })
+    }
+
+    private fun observe(){
+            viewModel.snackbarText.observe(this, {
+                it.getContentIfNotHandled().let { text->
+                    if (text == null) return@let
+                    Snackbar.make(coordinator, getString(text), Snackbar.LENGTH_LONG).setAction(
+                        "点击"
+                    ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
+                }
+            })
     }
 
     override fun finish() {
         super.finish()
         unbindService(connection)
-        stopService()
         downloadBinder.destroy()
     }
 }

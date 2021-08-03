@@ -209,7 +209,7 @@ public class ConcurrentDownLoad {
         insertMessage("请求资源:" + this.builder.url);
         insertMessage(String.format("文件总长度:%s字节(B)", total));
         // 重置 blockSize
-        this.builder.setBlockSize(this.builder.blockSize >= total ? total : this.builder.blockSize);
+        this.builder.setBlockSize(Math.min(this.builder.blockSize, total));
         // 初始化文件信息
         initFileOrHandleKeepOn();
         if(this.paces == null || this.paces.isEmpty()) {
@@ -312,9 +312,9 @@ public class ConcurrentDownLoad {
         long startIndex = 0;
         long endIndex;
         while(currentLength > 0) {
-            long size = currentLength >= this.builder.blockSize ? this.builder.blockSize : currentLength;
+            long size = Math.min(currentLength, this.builder.blockSize);
             endIndex = startIndex + size;
-            endIndex = endIndex >= total ? total : endIndex;
+            endIndex = Math.min(endIndex, total);
             paces.add(new Pace(startIndex, endIndex));
             currentLength = currentLength - size;
             startIndex = endIndex + 1;
@@ -347,7 +347,7 @@ public class ConcurrentDownLoad {
         StringBuilder builder = new StringBuilder(1024);
         builder.append(startTime).append("\r\n");
         this.paces.forEach(v -> builder.append(v.startIndex).append("-").append(v.endIndex).append("\r\n"));
-        Files.write(keepOnPath, builder.toString().getBytes(), StandardOpenOption.CREATE_NEW);
+        Files.write(keepOnPath, builder.toString().getBytes(), StandardOpenOption.CREATE);
 //        Files.writeString(keepOnPath, builder.toString());
     }
 

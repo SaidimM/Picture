@@ -40,10 +40,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:foreground="?selectableItemBackground"
         app:rippleColor="@color/gray_5"
-        android:layout_margin="6dp"
+        android:layout_marginEnd="6dp"
         android:id="@+id/download"
-        android:layout_width="24dp"
-        android:layout_height="24dp">
+        android:layout_width="36dp"
+        android:layout_height="36dp">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="16dp"
             android:layout_height="16dp"

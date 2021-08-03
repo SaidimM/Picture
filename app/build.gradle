@@ -70,6 +70,8 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation "org.jetbrains.anko:anko:0.10.5"
     implementation 'org.jetbrains.anko:anko-commons:0.10.5'
+
+    implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
 }
 repositories {
     mavenCentral()

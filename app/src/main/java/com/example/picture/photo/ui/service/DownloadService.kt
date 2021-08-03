@@ -9,9 +9,6 @@ import com.example.picture.R
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.utils.ConcurrentDownLoad
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-
-import android.app.NotificationManager
 
 
 class DownloadService : Service() {
@@ -22,24 +19,23 @@ class DownloadService : Service() {
     private var msg: String = ""
     private var current: Long = 0L
     private var total: Long = 0L
-    private lateinit var notificationBuilder: Notification.Builder
-    private lateinit var notificationManager: NotificationManager
     private val ID = "com.example.picture"
     private val NAME = "channel one"
+    private lateinit var downloadStatus: DownloadStatus
 
     override fun onBind(intent: Intent): IBinder {
         return mBinder
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(1,getNotification(0))
+        startForeground(1, getNotification(0))
         return super.onStartCommand(intent, flags, startId)
     }
 
     inner class DownloadBinder : Binder() {
-        fun startDownload(photo: UnsplashPhoto) {
+        fun startDownload(photo: UnsplashPhoto, downloadStatus: DownloadStatus) {
+            this@DownloadService.downloadStatus = downloadStatus
             doAsync {
-//            DownloadMain.start(photo.urls.raw)
                 ConcurrentDownLoad
                     .builder()
                     // 设置URL
@@ -51,7 +47,7 @@ class DownloadService : Service() {
                     // 设置保存路径
                     .setPath(
                         Environment.getExternalStorageDirectory().absolutePath +
-                                "/Download/picture/" + photo.user.name + photo.description + ".jpg"
+                                "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg"
                     )
                     // 设置存在是否删除(如果设置 setKeepOnIfDisconnect(true) 则失效)
                     .setDeleteIfExist(true)
@@ -62,12 +58,17 @@ class DownloadService : Service() {
                     // 开始
                     .start { msg, total, current, speed ->
                         if (total == 0L) return@start
-                        setProgress((current * 100 / total ).toInt())
-                        if (total == current) getNotificationManager().cancel(1)
+                        getNotification((current * 100 / total).toInt())
+                        downloadStatus.state(photo, msg, total, current, speed)
+                        if (total == current) {
+                            getNotificationManager().cancel(1)
+                            downloadStatus.finish(photo)
+                        }
                     }
             }
         }
-        fun destroy(){
+
+        fun destroy() {
             this@DownloadService.onDestroy()
         }
     }
@@ -79,9 +80,10 @@ class DownloadService : Service() {
         return manager
     }
 
-    private fun getNotification(progress: Int): Notification{
-        notificationBuilder = Notification.Builder(
-            this@DownloadService, ID) //设置通知左侧的小图标
+    private fun getNotification(progress: Int): Notification {
+        val notificationBuilder = Notification.Builder(
+            this@DownloadService, ID
+        ) //设置通知左侧的小图标
             .setSmallIcon(R.drawable.ic_download) //设置通知标题
             .setContentTitle("downloading...") //设置通知内容
             .setContentText("$progress%") //设置通知不可删除
@@ -93,9 +95,10 @@ class DownloadService : Service() {
         return notification
     }
 
-    private fun setProgress(progress: Int){
-        notificationBuilder.setProgress(100, progress, false)
-        notificationBuilder.setContentTitle("$progress%")
-        getNotificationManager().notify(1, notificationBuilder.build())
+
+
+    interface DownloadStatus {
+        fun state(photo: UnsplashPhoto, msg: String, total: Long, current: Long, speed: Long)
+        fun finish(photo: UnsplashPhoto)
     }
 }
