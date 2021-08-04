@@ -183,7 +183,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun observe(){
-            viewModel.snackbarText.observe(this, {
+            viewModel.snackBarText.observe(this, {
                 it.getContentIfNotHandled().let { text->
                     if (text == null) return@let
                     Snackbar.make(coordinator, getString(text), Snackbar.LENGTH_LONG).setAction(
