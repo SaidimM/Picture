@@ -1,24 +1,16 @@
 package com.example.picture.photo.ui.state
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.content.Intent
-import android.os.Build
-import android.os.Environment
 import android.text.TextUtils
 import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import com.example.picture.downloader.DownloadMain
 import com.example.picture.photo.UnsplashPhotoPicker
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.domain.Repository
-import com.example.picture.photo.utils.ConcurrentDownLoad
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.doAsync
 import java.util.concurrent.TimeUnit
 
 /**
@@ -88,7 +80,7 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
         _downloadUrl.value = photo
     }
 
-    fun openDrawer(){
+    fun openDrawer() {
         mOpenDrawer.value = true
     }
 }

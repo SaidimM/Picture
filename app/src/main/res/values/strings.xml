@@ -16,5 +16,8 @@
     <string name="channel_low">Low events</string>
     <string name="channel_media">Media events</string>
     <string name="background">background</string>
+    <string name="album_cover">album cover</string>
+    <string name="cancel">cancel</string>
+    <string name="next_music">next music</string>
 
 </resources>

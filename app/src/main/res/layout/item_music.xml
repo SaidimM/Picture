@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.example.picture.player.data.bean.Music" />
+            type="com.example.picture.player.data.bean.Mp3Info" />
         <variable
             name="isPlaying"
             type="Boolean" />
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/name"
-            android:text="@{item.name}"
+            android:text="@{item.title}"
             android:gravity="center_vertical"
             android:layout_gravity="start|center_vertical"
             tools:text="@string/app_name"

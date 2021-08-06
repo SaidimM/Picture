@@ -27,6 +27,10 @@ class MusicFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = MusicAdapter(state.musics, -1)
         recycler_view.adapter = adapter
-        adapter
+        adapter.setOnItemClickListener(object: MusicAdapter.OnItemClickListener{
+            override fun onItemClick(view: View?, postion: Int) {
+
+            }
+        })
     }
 }

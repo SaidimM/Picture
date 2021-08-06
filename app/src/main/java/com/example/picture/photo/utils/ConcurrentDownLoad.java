@@ -137,7 +137,7 @@ public class ConcurrentDownLoad {
             DecimalFormat format = new DecimalFormat("0.00%");
             this.run((msg, total, current, speed) -> {
                 // 记录日志
-                if(log.isDebugEnabled()) {
+                if(log.isDebugEnabled() && current != total) {
                     log.debug("msg:{} total:{} current:{} speed:{} KB/s, 已下载进度:{}", msg, total, current, speed / 1024, format.format(total == 0 ? 0 : (float) current / (float) total));
                 }
                 // 回调使用者

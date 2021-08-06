@@ -3,14 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_close.xml" value="0.38981481481481484" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_download.xml" value="0.35462962962962963" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_menu_black_48dp.xml" value="0.38981481481481484" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_music_note_black_48dp.xml" value="0.38981481481481484" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_next.xml" value="0.38981481481481484" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_picture.xml" value="0.24635416666666668" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_pre.xml" value="0.38981481481481484" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/drawable/ic_stop.xml" value="0.38981481481481484" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/activity_main.xml" value="0.176" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/fragment_music.xml" value="0.3277777777777778" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/fragment_unsplash.xml" value="0.23020833333333332" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/item_list_array.xml" value="0.4036458333333333" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/item_music.xml" value="0.4036458333333333" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/item_unsplash_photo.xml" value="1.6" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/notification_media_custom.xml" value="0.3472222222222222" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/notification_media_large.xml" value="0.32894736842105265" />
+        <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/layout/notification_media_small.xml" value="0.4036458333333333" />
         <entry key="..\:/Users/saidi/StudioProjects/Picture/app/src/main/res/xml/filepaths.xml" value="0.4036458333333333" />
       </map>
     </option>

@@ -27,11 +27,6 @@ class DownloadService : Service() {
         return mBinder
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(1, getNotification(0))
-        return super.onStartCommand(intent, flags, startId)
-    }
-
     inner class DownloadBinder : Binder() {
         fun startDownload(photo: UnsplashPhoto, downloadStatus: DownloadStatus) {
             this@DownloadService.downloadStatus = downloadStatus

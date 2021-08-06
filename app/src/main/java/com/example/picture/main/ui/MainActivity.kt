@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -19,23 +20,17 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.base.ui.page.BaseFragment
-import com.example.picture.base.utils.SnackbarUtils
 import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 import com.example.picture.photo.ui.service.DownloadService
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
-import androidx.core.content.FileProvider
-
-import android.os.Build
 
 
 class MainActivity : BaseActivity() {
@@ -52,6 +47,7 @@ class MainActivity : BaseActivity() {
     private var fragments: ArrayList<BaseFragment> = ArrayList()
     private var fIndex: Int = 0
     private lateinit var downloadBinder: DownloadService.DownloadBinder
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +66,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initView() {
+        mediaPlayer = MediaPlayer()
         fragments.add(UnsplashPhotoFragment())
         mDrawerLayout = findViewById(R.id.drawer_layout)
         mDrawerLayout.setScrimColor(Color.TRANSPARENT)
@@ -156,7 +153,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun download(photo: UnsplashPhoto) {
-        downloadBinder.startDownload(photo, object : DownloadService.DownloadStatus{
+        downloadBinder.startDownload(photo, object : DownloadService.DownloadStatus {
             override fun state(
                 photo: UnsplashPhoto,
                 msg: String,
@@ -168,10 +165,12 @@ class MainActivity : BaseActivity() {
             }
 
             override fun finish(photo: UnsplashPhoto) {
-                Snackbar.make(coordinator, "completed..",2000).setAction("check") {
+                Snackbar.make(coordinator, "completed..", 2000).setAction("check") {
                     val intent2 = Intent(Intent.ACTION_VIEW)
-                    val uri = Uri.parse("file://" + Environment.getExternalStorageDirectory().absolutePath +
-                            "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg")
+                    val uri = Uri.parse(
+                        "file://" + Environment.getExternalStorageDirectory().absolutePath +
+                                "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg"
+                    )
                     intent2.setDataAndType(uri, "image/*")
                     intent2.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     intent2.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -182,20 +181,27 @@ class MainActivity : BaseActivity() {
         })
     }
 
-    private fun observe(){
-            viewModel.snackBarText.observe(this, {
-                it.getContentIfNotHandled().let { text->
-                    if (text == null) return@let
-                    Snackbar.make(coordinator, getString(text), Snackbar.LENGTH_LONG).setAction(
-                        "点击"
-                    ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
-                }
-            })
+    private fun observe() {
+        viewModel.snackBarText.observe(this, {
+            it.getContentIfNotHandled().let { text ->
+                if (text == null) return@let
+                Snackbar.make(coordinator, getString(text), Snackbar.LENGTH_LONG).setAction(
+                    "点击"
+                ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
+            }
+        })
+        viewModel.position.observe(this, {
+            viewModel.manager.play(it)
+        })
     }
 
     override fun finish() {
         super.finish()
         unbindService(connection)
         downloadBinder.destroy()
+    }
+
+    companion object{
+        val NOTIFICATION_MUSIC = 2
     }
 }
