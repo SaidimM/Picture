@@ -2,12 +2,17 @@ package com.example.picture.base.ui.page
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -107,5 +112,45 @@ abstract class BaseActivity : DataBindingActivity() {
 
     protected fun showShortToast(stringRes: Int) {
         showShortToast(applicationContext.getString(stringRes))
+    }
+
+    //点击EditText之外的区域隐藏键盘
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (isSoftShowing() && isShouldHideInput(v, ev)) {
+                val imm: InputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v!!.windowToken, 0)
+                return true
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    //判断软键盘是否正在展示
+    private fun isSoftShowing(): Boolean {
+        //获取当前屏幕内容的高度
+        val screenHeight = window.decorView.height
+        //获取View可见区域的bottom
+        val rect = Rect()
+        window.decorView.getWindowVisibleDisplayFrame(rect)
+        return screenHeight - rect.bottom !== 0
+    }
+
+
+    //是否需要隐藏键盘
+    private fun isShouldHideInput(v: View?, event: MotionEvent): Boolean {
+        if (v != null && v is EditText) {
+            val leftTop = intArrayOf(0, 0)
+            //获取输入框当前的location位置
+            v.getLocationInWindow(leftTop)
+            val left = leftTop[0]
+            val top = leftTop[1]
+            val bottom = top + v.getHeight()
+            val right = left + v.getWidth()
+            return !(event.x > left && event.x < right && event.y > top && event.y < bottom)
+        }
+        return false
     }
 }

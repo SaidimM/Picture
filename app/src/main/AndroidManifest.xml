@@ -23,6 +23,7 @@
         android:theme="@style/Theme.Picture"
         android:fullBackupContent="true">
         <service android:name=".photo.ui.service.DownloadService"/>
+        <service android:name=".player.ui.PlayerServer"/>
 
         <activity android:name=".main.ui.MainActivity">
             <intent-filter>
