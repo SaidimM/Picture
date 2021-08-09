@@ -1,14 +1,12 @@
 package com.example.picture.player.ui
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.ViewModel
 import com.example.picture.R
 import com.example.picture.base.utils.ImageUtils
 import com.example.picture.main.state.MainActivityViewModel
@@ -16,9 +14,10 @@ import com.example.picture.main.ui.MainActivity
 import com.example.picture.player.helper.PlayerManager
 import com.example.picture.player.util.MediaUtil
 
-class PlayerServer constructor(private var viewModel: MainActivityViewModel) : Service() {
-    private val binder = PlayerBinding()
+class PlayerServer: Service() {
     private val ID = "com.example.picture.player.ui"
+    private val NAME = "channel two"
+    private lateinit var playerManager: PlayerManager
     val ACTION_SIMPLE = "com.android.peter.notificationdemo.ACTION_SIMPLE";
     val ACTION_ACTION = "com.android.peter.notificationdemo.ACTION_ACTION";
     val ACTION_REMOTE_INPUT = "com.android.peter.notificationdemo.ACTION_REMOTE_INPUT";
@@ -48,34 +47,20 @@ class PlayerServer constructor(private var viewModel: MainActivityViewModel) : S
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
+        playerManager = PlayerManager.get()
+        getNotification()
+        return START_NOT_STICKY
     }
 
-    inner class PlayerBinding : Binder() {
-        fun play() {
-            viewModel.play()
-            getNotification()
-        }
-
-        fun pre() {
-            viewModel.preMusic()
-            getNotification()
-        }
-
-        fun next() {
-            viewModel.nextMusic()
-            getNotification()
-        }
-
-        fun start() {
-            viewModel.manager
-            getNotification()
-        }
-    }
-
-    fun getNotification() {
-        val music = PlayerManager.get().getCurrentMusic()
+    private fun getNotificationManager(): NotificationManager {
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_LOW)
+        manager.createNotificationChannel(channel)
+        return manager
+    }
+
+    private fun getNotification() {
+        val music = PlayerManager.get().getCurrentMusic()
         val builder = Notification.Builder(this, ID)
         //click layout action
         val intent = Intent(this, MainActivity::class.java)
@@ -99,7 +84,7 @@ class PlayerServer constructor(private var viewModel: MainActivityViewModel) : S
         val next = PendingIntent.getService(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val customView = RemoteViews(this.packageName, R.layout.notification_media_small)
-        customView.setImageViewBitmap(R.id.album_cover, MediaUtil.getArtwork(this, music.id,music.albumId, true, true))
+        customView.setImageViewBitmap(R.id.album_cover, MediaUtil.getArtwork(this, music.id,music.albumId, true, false))
         customView.setTextViewText(R.id.name, music.title)
         customView.setTextViewText(R.id.artist, music.artist)
         customView.setImageViewBitmap(R.id.stop_button,
@@ -124,9 +109,9 @@ class PlayerServer constructor(private var viewModel: MainActivityViewModel) : S
             //设置通知左侧的小图标
             .setSmallIcon(R.drawable.ic_music_on)
             //设置通知标题
-            .setContentTitle("Custom notification")
+            .setContentTitle("music notification")
             //设置通知内容
-            .setContentText("Demo for custom notification !")
+            .setContentText("Demo for music notification !")
             //设置通知不可删除
             .setOngoing(true)
             //设置显示通知时间
@@ -137,6 +122,6 @@ class PlayerServer constructor(private var viewModel: MainActivityViewModel) : S
             .setCustomContentView(customView)
             //设置自定义大视图
             .setCustomBigContentView(customBigView)
-        manager.notify(MainActivity.NOTIFICATION_MUSIC,builder.build())
+        getNotificationManager().notify(MainActivity.NOTIFICATION_MUSIC,builder.build())
     }
 }

@@ -28,6 +28,10 @@ class MainActivityViewModel : ViewModel() {
         else _position.value = _position.value!! - 1
     }
 
+    fun setPosition(p: Int){
+        _position.value = p
+    }
+
     fun play() {
         manager.play()
     }

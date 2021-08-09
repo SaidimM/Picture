@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:contentDescription="@string/next_music"
-            android:padding="10dp"
+            android:padding="18dp"
             android:src="@drawable/ic_stop" />
 
         <ImageButton
@@ -65,7 +65,7 @@
             android:layout_marginEnd="16dp"
             android:background="@color/transparent"
             android:contentDescription="@string/next_music"
-            android:padding="10dp"
+            android:padding="18dp"
             android:src="@drawable/ic_next"/>
 
         <ImageButton

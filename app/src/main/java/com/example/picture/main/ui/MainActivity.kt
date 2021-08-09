@@ -2,10 +2,12 @@ package com.example.picture.main.ui
 
 import android.Manifest
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Rect
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -29,8 +31,13 @@ import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 import com.example.picture.photo.ui.service.DownloadService
+import com.example.picture.player.ui.fragment.MusicFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import android.widget.EditText
+
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 
 
 class MainActivity : BaseActivity() {
@@ -68,6 +75,7 @@ class MainActivity : BaseActivity() {
     private fun initView() {
         mediaPlayer = MediaPlayer()
         fragments.add(UnsplashPhotoFragment())
+        fragments.add(MusicFragment())
         mDrawerLayout = findViewById(R.id.drawer_layout)
         mDrawerLayout.setScrimColor(Color.TRANSPARENT)
         cardView = findViewById(R.id.card_view)

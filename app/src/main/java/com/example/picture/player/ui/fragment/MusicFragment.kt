@@ -1,5 +1,6 @@
 package com.example.picture.player.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.library.baseAdapters.BR
@@ -7,6 +8,7 @@ import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
 import com.example.picture.base.ui.page.BaseFragment
 import com.example.picture.main.state.MainActivityViewModel
+import com.example.picture.player.ui.PlayerServer
 import com.example.picture.player.ui.adapter.MusicAdapter
 import com.example.picture.player.ui.state.MusicViewModel
 import kotlinx.android.synthetic.main.fragment_music.*
@@ -29,7 +31,9 @@ class MusicFragment: BaseFragment() {
         recycler_view.adapter = adapter
         adapter.setOnItemClickListener(object: MusicAdapter.OnItemClickListener{
             override fun onItemClick(view: View?, postion: Int) {
-
+                state.setPosition(postion)
+                state.play()
+                context?.startService(Intent(context, PlayerServer::class.java))
             }
         })
     }

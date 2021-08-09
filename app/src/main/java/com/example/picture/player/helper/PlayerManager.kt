@@ -8,7 +8,7 @@ import com.example.picture.player.util.MediaUtil
 
 
 class PlayerManager {
-    private var player: MediaPlayer = MediaPlayer()
+    private lateinit var player: MediaPlayer
     private var position = 0
     var playList: ArrayList<Mp3Info> = ArrayList()
     fun play(index: Int? = null) {
@@ -39,7 +39,7 @@ class PlayerManager {
         }
     }
 
-    fun isPlaying(): Boolean{
+    fun isPlaying(): Boolean {
         return player.isPlaying
     }
 
