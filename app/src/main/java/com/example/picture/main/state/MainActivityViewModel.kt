@@ -13,7 +13,7 @@ class MainActivityViewModel : ViewModel() {
     private val _snackBarText = MutableLiveData<Event<Int>>()
     val snackBarText: LiveData<Event<Int>> = _snackBarText
 
-    private var _position = MutableLiveData(0)
+    private var _position = MutableLiveData<Int>()
     val position: LiveData<Int> = _position
 
     fun nextMusic() {
@@ -34,5 +34,19 @@ class MainActivityViewModel : ViewModel() {
 
     fun play() {
         manager.play()
+    }
+
+    fun setListener(){
+        manager.setListener(listener)
+    }
+
+    val listener= object: PlayerManager.PLayerStateListener{
+        override fun onPause(position: Int) {
+
+        }
+
+        override fun onPlay(position: Int) {
+            TODO("Not yet implemented")
+        }
     }
 }

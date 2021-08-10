@@ -39,7 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:foreground="?selectableItemBackground"
-        app:rippleColor="@color/gray_5"
+        app:rippleColor="@color/gray_1"
         android:layout_marginEnd="6dp"
         android:id="@+id/download"
         android:layout_width="36dp"

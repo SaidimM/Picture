@@ -2,6 +2,7 @@ package com.example.picture.player.ui
 
 import android.app.*
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.widget.RemoteViews
@@ -41,6 +42,7 @@ class PlayerServer: Service() {
     val ACTION_CUSTOM_VIEW_OPTIONS_LYRICS =
         "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_LYRICS";
     val ACTION_CUSTOM_VIEW_OPTIONS_CANCEL = "com.example.pic.ui.ACTION_CUSTOM_VIEW_OPTIONS_CANCEL";
+    val ACTION_CUSTOM_VIEW_OPTIONS_FORWARD = "com.example.pic.ui.ACTION_CUSTOM_VIEW_OPTIONS_FORWARD";
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -48,6 +50,22 @@ class PlayerServer: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         playerManager = PlayerManager.get()
+        when(intent?.action){
+            ACTION_CUSTOM_VIEW_OPTIONS_CANCEL -> {
+                this.stopService(intent)
+                getNotificationManager().cancel(MainActivity.NOTIFICATION_MUSIC)
+                playerManager.destroy()
+                return super.onStartCommand(intent, flags, startId)
+            }
+            ACTION_CUSTOM_VIEW_OPTIONS_PLAY_OR_PAUSE -> playerManager.play()
+            ACTION_CUSTOM_VIEW_OPTIONS_PRE -> playerManager.pre()
+            ACTION_CUSTOM_VIEW_OPTIONS_NEXT -> playerManager.next()
+            ACTION_CUSTOM_VIEW_OPTIONS_FORWARD -> {
+                intent.addCategory("android.intent.category.LAUNCHER")
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                startActivity(intent)
+            }
+        }
         getNotification()
         return START_NOT_STICKY
     }
@@ -64,6 +82,7 @@ class PlayerServer: Service() {
         val builder = Notification.Builder(this, ID)
         //click layout action
         val intent = Intent(this, MainActivity::class.java)
+        intent.action = ACTION_CUSTOM_VIEW_OPTIONS_FORWARD
         val click = PendingIntent.getService(this, 0, intent, 0)
         //click the close action
         val closeIntent = Intent(this, PlayerServer::class.java)
@@ -108,10 +127,6 @@ class PlayerServer: Service() {
         builder
             //设置通知左侧的小图标
             .setSmallIcon(R.drawable.ic_music_on)
-            //设置通知标题
-            .setContentTitle("music notification")
-            //设置通知内容
-            .setContentText("Demo for music notification !")
             //设置通知不可删除
             .setOngoing(true)
             //设置显示通知时间

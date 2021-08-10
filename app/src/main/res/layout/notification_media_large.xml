@@ -14,7 +14,7 @@
         android:layout_height="120dp"
         android:contentDescription="@string/album_cover"
         android:scaleType="centerCrop"
-        android:background="@mipmap/album_cover_default"
+        android:background="@mipmap/album_cover"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,8 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_height="120dp"
         android:orientation="vertical">
         <LinearLayout
             android:id="@+id/title_ll"
@@ -60,7 +61,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/title_ll"
             app:layout_constraintBottom_toBottomOf="@id/album_cover"
@@ -72,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/transparent"
                 android:contentDescription="@string/next_music"
-                android:padding="4dp"
+                android:padding="12dp"
                 android:src="@drawable/ic_pre" />
 
             <ImageButton
@@ -82,29 +83,29 @@
                 android:background="@color/transparent"
                 android:contentDescription="@string/next_music"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="4dp"
+                android:paddingVertical="12dp"
                 android:src="@drawable/ic_stop" />
 
             <ImageButton
                 android:id="@+id/next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:background="@color/transparent"
                 android:contentDescription="@string/next_music"
-                android:padding="4dp"
+                android:padding="12dp"
                 android:src="@drawable/ic_next" />
         </LinearLayout>
     </LinearLayout>
+
     <ImageButton
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:layout_marginVertical="18dp"
         android:background="@color/transparent"
         android:contentDescription="@string/cancel"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:layout_gravity="end|top"
+        android:padding="16dp"
         android:src="@drawable/ic_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/title_ll" />

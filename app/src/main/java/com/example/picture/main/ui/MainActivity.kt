@@ -38,6 +38,7 @@ import android.widget.EditText
 
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import com.example.picture.player.ui.PlayerServer
 
 
 class MainActivity : BaseActivity() {
@@ -207,6 +208,7 @@ class MainActivity : BaseActivity() {
         super.finish()
         unbindService(connection)
         downloadBinder.destroy()
+        stopService(Intent(this, PlayerServer::class.java))
     }
 
     companion object{

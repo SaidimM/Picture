@@ -32,7 +32,6 @@ class MusicFragment: BaseFragment() {
         adapter.setOnItemClickListener(object: MusicAdapter.OnItemClickListener{
             override fun onItemClick(view: View?, postion: Int) {
                 state.setPosition(postion)
-                state.play()
                 context?.startService(Intent(context, PlayerServer::class.java))
             }
         })

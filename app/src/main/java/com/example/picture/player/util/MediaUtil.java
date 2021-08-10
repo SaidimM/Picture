@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MediaUtil {
@@ -78,6 +79,7 @@ public class MediaUtil {
             }
         }
         cursor.close();
+        Collections.reverse(mp3Infos);
         return mp3Infos;
     }
 
@@ -117,9 +119,9 @@ public class MediaUtil {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inPreferredConfig = Bitmap.Config.RGB_565;
         if (small) { // 返回小图片,文件路径为默认的图片
-            return ImageUtils.drawable2Bitmap(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.album_cover, null));
+            return ImageUtils.drawable2Bitmap(ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_album_cover, null));
         }
-        return ImageUtils.drawable2Bitmap(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.album_cover_default, null));
+        return ImageUtils.drawable2Bitmap(ResourcesCompat.getDrawable(context.getResources(), R.mipmap.album_cover, null));
     }
 
     /**

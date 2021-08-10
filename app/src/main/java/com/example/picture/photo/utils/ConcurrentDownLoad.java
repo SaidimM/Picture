@@ -149,6 +149,10 @@ public class ConcurrentDownLoad {
         }
     }
 
+    public void onFinish(){
+
+    }
+
     private void run(Callback c) throws Exception {
         this.callback = c;
         // 运行回调任务

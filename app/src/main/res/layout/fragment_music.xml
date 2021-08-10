@@ -17,14 +17,11 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:theme="@style/Theme.Picture"
             android:id="@+id/appbar_layout">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
                 android:id="@+id/collapsing_layout"
                 app:contentScrim="@color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
