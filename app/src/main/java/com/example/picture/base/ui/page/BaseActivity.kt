@@ -32,7 +32,7 @@ abstract class BaseActivity : DataBindingActivity() {
     private var mApplicationProvider: ViewModelProvider? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         BarUtils.setStatusBarColor(this, Color.TRANSPARENT)
-        BarUtils.setStatusBarLightMode(this, true)
+        BarUtils.setStatusBarLightMode(this, false)
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(NetworkStateManager.getInstance())
 

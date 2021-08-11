@@ -8,30 +8,42 @@ import com.example.picture.player.util.MediaUtil
 
 
 class PlayerManager {
-    private var player: MediaPlayer? = null
+    var player: MediaPlayer? = null
     private var position = 0
     private var listener: PLayerStateListener? = null
     var playList: ArrayList<Mp3Info> = ArrayList()
     fun play(index: Int? = null) {
+        val oldPosition = position
         if (player == null) {
             player = MediaPlayer()
             player!!.reset()
         }
-        if(listener != null) {
-            if (isPlaying())
-                listener!!.onPause(position)
-            else listener!!.onPlay(position)
-        }
         if (playList.isEmpty()) return
         if (index != null) {
-            if (index > playList.size - 1 || index < 0) return
             position = index
-            player!!.reset()
-            player!!.setDataSource(playList[position].url)
-            player!!.prepare()
+            if (oldPosition == position) {
+                playOrPause()
+            }
+            else {
+                if (index > playList.size - 1 || index < 0) return
+                player!!.reset()
+                player!!.setDataSource(playList[position].url)
+                player!!.prepare()
+                player!!.start()
+            }
+        } else {
+            playOrPause()
         }
-        if (!player!!.isPlaying) player!!.start()
-        else player!!.pause()
+        playList[oldPosition].isPlaying = 0
+        playList[position].isPlaying = 1
+        listener!!.onPlay(position, oldPosition)
+    }
+
+    private fun playOrPause(){
+        if(player!!.isPlaying) {
+            player!!.pause()
+            if (listener != null) listener!!.onPause(position)
+        } else player!!.start()
     }
 
     fun getCurrentMusic(): Mp3Info {
@@ -66,25 +78,28 @@ class PlayerManager {
     }
 
     fun next(){
-        position ++
-        if (position == playList.size) position = 0
-        play(position)
+        var new = position
+        new ++
+        if (new == playList.size) new = 0
+        play(new)
     }
 
     fun pre(){
-        position--
-        if (position < 0 ) position = playList.size - 1
-        play(position)
+        var new = position
+        new--
+        if (new < 0 ) new = playList.size - 1
+        play(new)
     }
 
     fun destroy() {
         this.player!!.stop()
         this.player!!.release()
+        this.player = null
     }
 
     interface PLayerStateListener{
         fun onPause(position: Int)
-        fun onPlay(position: Int)
+        fun onPlay(position: Int, oldPosition: Int)
     }
 
     fun setListener(listener: PLayerStateListener){

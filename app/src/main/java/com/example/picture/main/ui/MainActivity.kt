@@ -199,9 +199,6 @@ class MainActivity : BaseActivity() {
                 ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
             }
         })
-        viewModel.position.observe(this, {
-            viewModel.manager.play(it)
-        })
     }
 
     override fun finish() {

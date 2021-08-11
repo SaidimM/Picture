@@ -75,6 +75,7 @@ public class MediaUtil {
                 mp3Info.setDuration(duration);
                 mp3Info.setSize(size);
                 mp3Info.setUrl(url);
+                mp3Info.setIsPlaying(0);
                 mp3Infos.add(mp3Info);
             }
         }
