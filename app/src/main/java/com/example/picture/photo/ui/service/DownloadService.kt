@@ -14,11 +14,6 @@ import org.jetbrains.anko.doAsync
 class DownloadService : Service() {
 
     private val mBinder = DownloadBinder()
-    private var mProgress = 0
-    private var speed: Long = 0L
-    private var msg: String = ""
-    private var current: Long = 0L
-    private var total: Long = 0L
     private val ID = "com.example.picture"
     private val NAME = "channel one"
     private lateinit var downloadStatus: DownloadStatus

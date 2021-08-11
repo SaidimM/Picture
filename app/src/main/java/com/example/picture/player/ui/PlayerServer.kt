@@ -19,29 +19,29 @@ class PlayerServer: Service() {
     private val ID = "com.example.picture.player.ui"
     private val NAME = "channel two"
     private lateinit var playerManager: PlayerManager
-    val ACTION_SIMPLE = "com.android.peter.notificationdemo.ACTION_SIMPLE";
-    val ACTION_ACTION = "com.android.peter.notificationdemo.ACTION_ACTION";
-    val ACTION_REMOTE_INPUT = "com.android.peter.notificationdemo.ACTION_REMOTE_INPUT";
-    val ACTION_BIG_PICTURE_STYLE = "com.android.peter.notificationdemo.ACTION_BIG_PICTURE_STYLE";
-    val ACTION_BIG_TEXT_STYLE = "com.android.peter.notificationdemo.ACTION_BIG_TEXT_STYLE";
-    val ACTION_INBOX_STYLE = "com.android.peter.notificationdemo.ACTION_INBOX_STYLE";
-    val ACTION_MEDIA_STYLE = "com.android.peter.notificationdemo.ACTION_MEDIA_STYLE";
-    val ACTION_MESSAGING_STYLE = "com.android.peter.notificationdemo.ACTION_MESSAGING_STYLE";
-    val ACTION_PROGRESS = "com.android.peter.notificationdemo.ACTION_PROGRESS";
+    val ACTION_SIMPLE = "com.example.picture.player.ui.ACTION_SIMPLE";
+    val ACTION_ACTION = "com.example.picture.player.ui.ACTION_ACTION";
+    val ACTION_REMOTE_INPUT = "com.example.picture.player.ui.ACTION_REMOTE_INPUT";
+    val ACTION_BIG_PICTURE_STYLE = "com.example.picture.player.ui.ACTION_BIG_PICTURE_STYLE";
+    val ACTION_BIG_TEXT_STYLE = "com.example.picture.player.ui.ACTION_BIG_TEXT_STYLE";
+    val ACTION_INBOX_STYLE = "com.example.picture.player.ui.ACTION_INBOX_STYLE";
+    val ACTION_MEDIA_STYLE = "com.example.picture.player.ui.ACTION_MEDIA_STYLE";
+    val ACTION_MESSAGING_STYLE = "com.example.picture.player.ui.ACTION_MESSAGING_STYLE";
+    val ACTION_PROGRESS = "com.example.picture.player.ui.ACTION_PROGRESS";
     val ACTION_CUSTOM_HEADS_UP_VIEW =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_HEADS_UP_VIEW";
-    val ACTION_CUSTOM_VIEW = "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW";
+        "com.example.picture.player.ui.ACTION_CUSTOM_HEADS_UP_VIEW";
+    val ACTION_CUSTOM_VIEW = "com.example.picture.player.ui.ACTION_CUSTOM_VIEW";
     val ACTION_CUSTOM_VIEW_OPTIONS_LOVE =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_LOVE";
+        "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_LOVE";
     val ACTION_CUSTOM_VIEW_OPTIONS_PRE =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_PRE";
+        "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_PRE";
     val ACTION_CUSTOM_VIEW_OPTIONS_PLAY_OR_PAUSE =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_PLAY_OR_PAUSE";
+        "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_PLAY_OR_PAUSE";
     val ACTION_CUSTOM_VIEW_OPTIONS_NEXT =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_NEXT";
+        "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_NEXT";
     val ACTION_CUSTOM_VIEW_OPTIONS_LYRICS =
-        "com.android.peter.notificationdemo.ACTION_CUSTOM_VIEW_OPTIONS_LYRICS";
-    val ACTION_CUSTOM_VIEW_OPTIONS_CANCEL = "com.example.pic.ui.ACTION_CUSTOM_VIEW_OPTIONS_CANCEL";
+        "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_LYRICS";
+    val ACTION_CUSTOM_VIEW_OPTIONS_CANCEL = "com.example.picture.player.ui.ACTION_CUSTOM_VIEW_OPTIONS_CANCEL";
     val ACTION_CUSTOM_VIEW_OPTIONS_FORWARD = "com.example.pic.ui.ACTION_CUSTOM_VIEW_OPTIONS_FORWARD";
 
     override fun onBind(intent: Intent?): IBinder? {
