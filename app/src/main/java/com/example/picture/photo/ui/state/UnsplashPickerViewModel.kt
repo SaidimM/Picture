@@ -23,9 +23,6 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
     private val mPhotosLiveData = MutableLiveData<PagedList<UnsplashPhoto>>()
     val photosLiveData: LiveData<PagedList<UnsplashPhoto>> get() = mPhotosLiveData
 
-    private val mOpenDrawer = MutableLiveData<Boolean>()
-    var openDrawer: LiveData<Boolean> = mOpenDrawer
-
     private val _downloadUrl = MutableLiveData<UnsplashPhoto>()
     var downloadUrl: LiveData<UnsplashPhoto> = _downloadUrl
 
@@ -78,9 +75,5 @@ class UnsplashPickerViewModel constructor(private val repository: Repository) : 
     fun download(photo: UnsplashPhoto) {
         repository.trackDownload(photo.links.download_location)
         _downloadUrl.value = photo
-    }
-
-    fun openDrawer() {
-        mOpenDrawer.value = true
     }
 }

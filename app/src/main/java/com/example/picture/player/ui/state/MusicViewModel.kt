@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.picture.player.helper.PlayerManager
 
 class MusicViewModel: ViewModel() {
-    var manager: PlayerManager = PlayerManager.get().init()
+    var manager: PlayerManager = PlayerManager.get()
     var musics = PlayerManager.get().playList
 
     private var _snackBarMessage = MutableLiveData<Int>()

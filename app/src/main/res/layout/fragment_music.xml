@@ -6,6 +6,9 @@
         <variable
             name="viewModel"
             type="com.example.picture.player.ui.state.MusicViewModel" />
+        <variable
+            name="state"
+            type="com.example.picture.main.state.MainActivityViewModel" />
         <import type="com.example.picture.player.ui.adapter.MusicAdapter"/>
     </data>
 
@@ -23,9 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/collapsing_layout"
-                app:contentScrim="@color/transparent"
+                app:contentScrim="@color/gray_6"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="275dp"
@@ -35,6 +37,65 @@
                     android:scaleType="centerCrop"
                     android:background="@mipmap/title_back"
                     android:contentDescription="@string/background" />
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="pin"
+                    app:titleMargin="0dp"
+                    android:id="@+id/toolbar"
+                    android:layout_marginTop="16dp">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        drawable_radius="@{8}"
+                        drawable_solidColor="@{0x88ffffff}"
+                        drawable_strokeColor="@{0x33666666}"
+                        drawable_strokeWidth="@{1}"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_margin="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp">
+
+                        <EditText
+                            android:id="@+id/tv_app"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:background="@null"
+                            android:textColor="@color/white"
+                            android:hint="@string/search"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_menu"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="12dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            openDrawer="@{state}"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_menu_black_48dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_search"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_search_black_48dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.appcompat.widget.Toolbar>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 

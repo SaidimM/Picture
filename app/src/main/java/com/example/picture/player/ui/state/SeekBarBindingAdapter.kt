@@ -1,7 +1,5 @@
 package com.example.picture.player.ui.state
 
-import android.view.View
-import android.widget.AbsSeekBar
 import android.widget.SeekBar
 import androidx.databinding.BindingAdapter
 import com.example.picture.player.data.bean.Mp3Info
@@ -11,7 +9,7 @@ import java.util.*
 
 @BindingAdapter(value = ["setProgress"], requireAll = false)
 fun setProgress(seekBar: SeekBar, item: Mp3Info){
-    if (seekBar.visibility == View.VISIBLE){
+    if (item.isPlaying == 1){
         seekBar.max = item.duration
         val timer = Timer()
         timer.schedule(object: TimerTask(){

@@ -38,10 +38,21 @@ import android.widget.EditText
 
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import com.example.picture.player.helper.PlayerManager
 import com.example.picture.player.ui.PlayerServer
+import androidx.core.content.ContextCompat
+import com.baidu.speech.EventListener
+import com.baidu.speech.EventManager
+import com.baidu.speech.EventManagerFactory
+import com.baidu.speech.asr.SpeechConstant
+import com.example.picture.wakeup.inputstream.InFileStream
+
+import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), EventListener  {
     private val PERMISSIONS_STORAGE = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -56,6 +67,7 @@ class MainActivity : BaseActivity() {
     private var fIndex: Int = 0
     private lateinit var downloadBinder: DownloadService.DownloadBinder
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var wakeup: EventManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +80,14 @@ class MainActivity : BaseActivity() {
         }
         setContentView(R.layout.activity_main)
         initView()
+        initPermission()
+        // 基于SDK唤醒词集成1.1 初始化EventManager
+        wakeup = EventManagerFactory.create(this, "wp");
+        // 基于SDK唤醒词集成1.3 注册输出事件
+        wakeup.registerListener(this); //  EventListener 中 onEvent方法
+        start()
         observe()
+        PlayerManager.get().init()
         val intent = Intent(this, DownloadService::class.java)
         bindService(intent, connection, BIND_AUTO_CREATE)
     }
@@ -123,10 +142,6 @@ class MainActivity : BaseActivity() {
         transaction.replace(R.id.container, fragments[index])
         transaction.addToBackStack(null)
         transaction.commit()
-    }
-
-    fun openDrawer() {
-        mDrawerLayout.openDrawer(GravityCompat.START)
     }
 
     override fun onRequestPermissionsResult(
@@ -199,6 +214,36 @@ class MainActivity : BaseActivity() {
                 ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
             }
         })
+        viewModel.openDrawer.observe(this, {
+            mDrawerLayout.openDrawer(GravityCompat.START)
+        })
+    }
+
+    /**
+     * android 6.0 以上需要动态申请权限
+     */
+    private fun initPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        val toApplyList = ArrayList<String>()
+        for (perm in permissions) {
+            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
+                    this,
+                    perm
+                )
+            ) {
+                toApplyList.add(perm)
+                // 进入到这里代表没有权限.
+            }
+        }
+        val tmpList = arrayOfNulls<String>(toApplyList.size)
+        if (toApplyList.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123)
+        }
     }
 
     override fun finish() {
@@ -210,5 +255,56 @@ class MainActivity : BaseActivity() {
 
     companion object{
         val NOTIFICATION_MUSIC = 2
+    }
+
+    //  基于SDK唤醒词集成1.2 自定义输出事件类 EventListener  回调方法
+    // 基于SDK唤醒3.1 开始回调事件
+    override fun onEvent(
+        name: String,
+        params: String?,
+        data: ByteArray?,
+        offset: Int,
+        length: Int
+    ) {
+        var logTxt = "name: $name"
+        if (params != null && !params.isEmpty()) {
+            logTxt += " ;params :$params"
+        } else if (data != null) {
+            logTxt += " ;data length=" + data.size
+        }
+        printLog(logTxt)
+    }
+
+    private fun printLog(text1: String) {
+        var text = text1
+        if (logTime) {
+            text += "  ;time=" + System.currentTimeMillis()
+        }
+        text += "\n"
+        Log.i(javaClass.name, text)
+    }
+
+    private val logTime = true
+
+    /**
+     * 测试参数填在这里
+     * 基于SDK唤醒词集成第2.1 设置唤醒的输入参数
+     */
+    private fun start() {
+        // 基于SDK唤醒词集成第2.1 设置唤醒的输入参数
+        val params: MutableMap<String?, Any?> = TreeMap<String?, Any?>()
+        params[SpeechConstant.ACCEPT_AUDIO_VOLUME] = false
+        params[SpeechConstant.WP_WORDS_FILE] = "assets:///WakeUp.bin"
+        // "assets:///WakeUp.bin" 表示WakeUp.bin文件定义在assets目录下
+        InFileStream.setContext(this)
+        var json: String? = null // 这里可以替换成你需要测试的json
+        json = JSONObject(params).toString()
+        wakeup.send(SpeechConstant.WAKEUP_START, json, null, 0, 0)
+        print("输入参数：$json")
+    }
+
+    // 基于SDK唤醒词集成第4.1 发送停止事件
+    private fun stop() {
+        wakeup.send(SpeechConstant.WAKEUP_STOP, null, null, 0, 0) //
     }
 }

@@ -72,7 +72,7 @@ public class Mp3Info implements Parcelable {
 	}
 
 	public int getDuration() {
-		return (int)duration/1000;
+		return (int)duration;
 	}
 
 	public void setDuration(long duration) {

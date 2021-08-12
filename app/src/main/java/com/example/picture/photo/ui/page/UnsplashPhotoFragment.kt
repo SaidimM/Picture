@@ -39,6 +39,7 @@ class UnsplashPhotoFragment : BaseFragment() {
     override fun getDataBindingConfig(): DataBindingConfig {
         return DataBindingConfig(R.layout.fragment_unsplash, BR.viewModel, viewModel)
             .addBindingParam(BR.adapter, adapter)
+            .addBindingParam(BR.state, state)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,10 +64,6 @@ class UnsplashPhotoFragment : BaseFragment() {
         })
         viewModel.photosLiveData.observe(this, {
             adapter.submitList(it)
-        })
-        viewModel.openDrawer.observe(this, {
-            (context as MainActivity).openDrawer()
-
         })
     }
 }

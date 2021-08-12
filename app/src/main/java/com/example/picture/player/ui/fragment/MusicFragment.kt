@@ -27,6 +27,7 @@ class MusicFragment: BaseFragment() {
 
     override fun getDataBindingConfig(): DataBindingConfig {
         return DataBindingConfig(R.layout.fragment_music, BR.viewModel, viewModel)
+            .addBindingParam(BR.state, state)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,7 +39,6 @@ class MusicFragment: BaseFragment() {
         adapter.setOnItemClickListener(object: MusicAdapter.OnItemClickListener{
             override fun onItemClick(view: View?, position: Int) {
                 viewModel.setPosition(position)
-                context?.startService(Intent(context, PlayerServer::class.java))
             }
         })
     }
@@ -62,6 +62,7 @@ class MusicFragment: BaseFragment() {
         override fun onPlay(position: Int, oldPosition: Int) {
             adapter.notifyItemChanged(position)
             if (position != oldPosition) adapter.notifyItemChanged(oldPosition)
+            context?.startService(Intent(context, PlayerServer::class.java))
         }
     }
 }

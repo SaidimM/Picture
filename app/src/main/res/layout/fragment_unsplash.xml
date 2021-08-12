@@ -7,6 +7,9 @@
             name="viewModel"
             type="com.example.picture.photo.ui.state.UnsplashPickerViewModel" />
         <variable
+            name="state"
+            type="com.example.picture.main.state.MainActivityViewModel" />
+        <variable
             name="adapter"
             type="com.example.picture.photo.ui.page.UnsplashPhotoAdapter" />
     </data>
@@ -77,7 +80,7 @@
                 android:layout_height="48dp"
                 android:padding="12dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                openDrawer="@{viewModel}"
+                openDrawer="@{state}"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_menu_black_48dp"
                 app:layout_constraintBottom_toBottomOf="parent"
