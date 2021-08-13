@@ -1,8 +1,9 @@
-package com.example.picture.wakeup.inputstream;
+package com.baidu.aip.asrwakeup3.core.inputstream;
 
+import android.app.Activity;
 import android.content.Context;
 
-import com.example.picture.wakeup.util.MyLogger;
+import com.baidu.aip.asrwakeup3.core.util.MyLogger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

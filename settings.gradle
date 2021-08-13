@@ -1,3 +1,4 @@
 rootProject.name = "Picture"
 include ':app'
 include ':app:mylibrary'
+include ':core'

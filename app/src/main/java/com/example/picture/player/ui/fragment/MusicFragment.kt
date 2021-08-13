@@ -32,7 +32,6 @@ class MusicFragment: BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setListener()
         observe()
         adapter = MusicAdapter(viewModel.musics)
         recycler_view.adapter = adapter
@@ -41,6 +40,11 @@ class MusicFragment: BaseFragment() {
                 viewModel.setPosition(position)
             }
         })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setListener()
     }
 
     private fun setListener(){

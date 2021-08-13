@@ -15,7 +15,7 @@ fun setProgress(seekBar: SeekBar, item: Mp3Info){
         timer.schedule(object: TimerTask(){
             override fun run() {
                 try {
-                    seekBar.progress = PlayerManager.get().player!!.currentPosition
+                    seekBar.progress = PlayerManager.get().player?.currentPosition ?: return
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }

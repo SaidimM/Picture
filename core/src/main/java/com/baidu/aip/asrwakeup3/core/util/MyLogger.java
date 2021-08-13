@@ -1,4 +1,4 @@
-package com.example.picture.wakeup.util;
+package com.baidu.aip.asrwakeup3.core.util;
 
 import android.os.Handler;
 import android.os.Message;

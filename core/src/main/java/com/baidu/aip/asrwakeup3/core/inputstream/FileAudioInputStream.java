@@ -1,4 +1,4 @@
-package com.example.picture.wakeup.inputstream;
+package com.baidu.aip.asrwakeup3.core.inputstream;
 
 import android.util.Log;
 

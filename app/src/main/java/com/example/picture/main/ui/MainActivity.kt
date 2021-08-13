@@ -2,12 +2,10 @@ package com.example.picture.main.ui
 
 import android.Manifest
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Rect
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -18,41 +16,34 @@ import android.view.View
 import androidx.annotation.NonNull
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.FragmentManager
+import com.baidu.aip.asrwakeup3.core.wakeup.WakeUpResult
+import com.baidu.aip.asrwakeup3.core.wakeup.listener.IWakeupListener
+import com.baidu.speech.EventListener
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.base.ui.page.BaseFragment
+import com.example.picture.base.utils.SPUtils
 import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.page.UnsplashPhotoFragment
 import com.example.picture.photo.ui.service.DownloadService
+import com.example.picture.player.helper.PlayerManager
+import com.example.picture.player.ui.PlayerServer
 import com.example.picture.player.ui.fragment.MusicFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import android.widget.EditText
-
-import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
-import com.example.picture.player.helper.PlayerManager
-import com.example.picture.player.ui.PlayerServer
-import androidx.core.content.ContextCompat
-import com.baidu.speech.EventListener
-import com.baidu.speech.EventManager
-import com.baidu.speech.EventManagerFactory
-import com.baidu.speech.asr.SpeechConstant
-import com.example.picture.wakeup.inputstream.InFileStream
-
-import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainActivity : BaseActivity(), EventListener  {
+class MainActivity : BaseActivity(), EventListener {
     private val PERMISSIONS_STORAGE = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -67,7 +58,6 @@ class MainActivity : BaseActivity(), EventListener  {
     private var fIndex: Int = 0
     private lateinit var downloadBinder: DownloadService.DownloadBinder
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var wakeup: EventManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,15 +71,29 @@ class MainActivity : BaseActivity(), EventListener  {
         setContentView(R.layout.activity_main)
         initView()
         initPermission()
-        // 基于SDK唤醒词集成1.1 初始化EventManager
-        wakeup = EventManagerFactory.create(this, "wp");
-        // 基于SDK唤醒词集成1.3 注册输出事件
-        wakeup.registerListener(this); //  EventListener 中 onEvent方法
-        start()
         observe()
         PlayerManager.get().init()
         val intent = Intent(this, DownloadService::class.java)
         bindService(intent, connection, BIND_AUTO_CREATE)
+        start(object: IWakeupListener{
+            override fun onSuccess(word: String?, result: WakeUpResult?) {
+                when(word){
+                    "播放" -> PlayerManager.get().play()
+                    "暂停" -> PlayerManager.get().player?.pause()
+                    "上一首" -> PlayerManager.get().pre()
+                    "下一首" -> PlayerManager.get().next()
+                }
+            }
+
+            override fun onStop() {
+            }
+
+            override fun onError(errorCode: Int, errorMessge: String?, result: WakeUpResult?) {
+            }
+
+            override fun onASrAudio(data: ByteArray?, offset: Int, length: Int) {
+            }
+        })
     }
 
     private fun initView() {
@@ -193,7 +197,7 @@ class MainActivity : BaseActivity(), EventListener  {
                     val intent2 = Intent(Intent.ACTION_VIEW)
                     val uri = Uri.parse(
                         "file://" + Environment.getExternalStorageDirectory().absolutePath +
-                                "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg"
+                                "/Download/picture/" + photo.user.name + " " + if (photo.description == null) photo.id + ".jpg" else photo.description + ".jpg"
                     )
                     intent2.setDataAndType(uri, "image/*")
                     intent2.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -253,58 +257,8 @@ class MainActivity : BaseActivity(), EventListener  {
         stopService(Intent(this, PlayerServer::class.java))
     }
 
-    companion object{
+    companion object {
         val NOTIFICATION_MUSIC = 2
     }
 
-    //  基于SDK唤醒词集成1.2 自定义输出事件类 EventListener  回调方法
-    // 基于SDK唤醒3.1 开始回调事件
-    override fun onEvent(
-        name: String,
-        params: String?,
-        data: ByteArray?,
-        offset: Int,
-        length: Int
-    ) {
-        var logTxt = "name: $name"
-        if (params != null && !params.isEmpty()) {
-            logTxt += " ;params :$params"
-        } else if (data != null) {
-            logTxt += " ;data length=" + data.size
-        }
-        printLog(logTxt)
-    }
-
-    private fun printLog(text1: String) {
-        var text = text1
-        if (logTime) {
-            text += "  ;time=" + System.currentTimeMillis()
-        }
-        text += "\n"
-        Log.i(javaClass.name, text)
-    }
-
-    private val logTime = true
-
-    /**
-     * 测试参数填在这里
-     * 基于SDK唤醒词集成第2.1 设置唤醒的输入参数
-     */
-    private fun start() {
-        // 基于SDK唤醒词集成第2.1 设置唤醒的输入参数
-        val params: MutableMap<String?, Any?> = TreeMap<String?, Any?>()
-        params[SpeechConstant.ACCEPT_AUDIO_VOLUME] = false
-        params[SpeechConstant.WP_WORDS_FILE] = "assets:///WakeUp.bin"
-        // "assets:///WakeUp.bin" 表示WakeUp.bin文件定义在assets目录下
-        InFileStream.setContext(this)
-        var json: String? = null // 这里可以替换成你需要测试的json
-        json = JSONObject(params).toString()
-        wakeup.send(SpeechConstant.WAKEUP_START, json, null, 0, 0)
-        print("输入参数：$json")
-    }
-
-    // 基于SDK唤醒词集成第4.1 发送停止事件
-    private fun stop() {
-        wakeup.send(SpeechConstant.WAKEUP_STOP, null, null, 0, 0) //
-    }
 }

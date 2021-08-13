@@ -25,6 +25,7 @@ class DownloadService : Service() {
     inner class DownloadBinder : Binder() {
         fun startDownload(photo: UnsplashPhoto, downloadStatus: DownloadStatus) {
             this@DownloadService.downloadStatus = downloadStatus
+            val fileName = photo.user.name + " " + if (photo.description == null) photo.id else photo.description + ".jpg"
             doAsync {
                 ConcurrentDownLoad
                     .builder()
@@ -37,7 +38,7 @@ class DownloadService : Service() {
                     // 设置保存路径
                     .setPath(
                         Environment.getExternalStorageDirectory().absolutePath +
-                                "/Download/picture/" + photo.user.name + " " + photo.id + ".jpg"
+                                "/Download/picture/" + fileName
                     )
                     // 设置存在是否删除(如果设置 setKeepOnIfDisconnect(true) 则失效)
                     .setDeleteIfExist(true)

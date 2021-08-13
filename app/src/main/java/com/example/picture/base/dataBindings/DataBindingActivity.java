@@ -5,12 +5,14 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+
+import com.baidu.aip.asrwakeup3.core.mini.ActivityMiniUnit;
+import com.baidu.aip.asrwakeup3.core.mini.ActivityMiniWakeUp;
 import com.example.picture.R;
 
-public abstract class DataBindingActivity extends AppCompatActivity {
+public abstract class DataBindingActivity extends ActivityMiniWakeUp {
     private ViewDataBinding mBinding;
     private TextView mTvStrictModeTip;
 
