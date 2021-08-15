@@ -33,7 +33,7 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
                 android:clickable="false"
-                android:longClickable="true"
+                android:focusable="false"
                 setProgress="@{item}"
                 android:visibility="@{item.isPlaying == 0 ? View.INVISIBLE : View.VISIBLE}"
                 android:progressDrawable="@drawable/back_seekbar_progress"

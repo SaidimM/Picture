@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/main_fragment"
+    android:id="@+id/navigation_main">
+    <fragment
+        android:id="@+id/main_fragment"
+        android:name="com.example.picture.photo.ui.page.UnsplashPhotoFragment"
+        android:label="main_fragment"
+        tools:layout="@layout/fragment_unsplash">
+        <action
+            android:id="@+id/action_music"
+            app:destination="@+id/music_fragment"/>
+        <action
+            android:id="@+id/action_download"
+            app:destination="@+id/download_fragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/music_fragment"
+        android:name="com.example.picture.player.ui.fragment.MusicFragment"
+        android:label="music_fragment"
+        tools:layout="@layout/fragment_music">
+
+        <action
+            android:id="@+id/action_music_fragment_to_main_fragment"
+            app:destination="@id/main_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/download_fragment"
+        android:name="com.example.picture.player.ui.fragment.MusicFragment"
+        android:label="music_fragment"
+        tools:layout="@layout/fragment_download">
+
+        <action
+            android:id="@+id/action_download_fragment_to_main_fragment"
+            app:destination="@id/main_fragment" />
+    </fragment>
+</navigation>

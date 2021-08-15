@@ -12,6 +12,8 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        addDrawerListener="@{cardView}"
+        scrimColor="@{@color/transparent}"
         android:id="@+id/drawer_layout"
         tools:context=".main.ui.MainActivity">
 
@@ -27,8 +29,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <FrameLayout
+                <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/container"
+                    app:defaultNavHost="true"
+                    app:navGraph="@navigation/navigation_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:layout_editor_absoluteX="0dp"

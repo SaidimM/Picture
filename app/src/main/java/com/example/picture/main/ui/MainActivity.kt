@@ -2,6 +2,7 @@ package com.example.picture.main.ui
 
 import android.Manifest
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
@@ -20,13 +21,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.baidu.aip.asrwakeup3.core.wakeup.WakeUpResult
-import com.baidu.aip.asrwakeup3.core.wakeup.listener.IWakeupListener
-import com.baidu.speech.EventListener
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
+import com.example.picture.base.ui.navigation.NavHostFragment
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.base.ui.page.BaseFragment
 import com.example.picture.base.utils.SPUtils
@@ -43,11 +43,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainActivity : BaseActivity(), EventListener {
-    private val PERMISSIONS_STORAGE = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
+class MainActivity : BaseActivity() {
     private val REQUEST_PERMISSION_CODE = 1
 
     private lateinit var viewModel: MainActivityViewModel
@@ -57,86 +53,14 @@ class MainActivity : BaseActivity(), EventListener {
     private var fragments: ArrayList<BaseFragment> = ArrayList()
     private var fIndex: Int = 0
     private lateinit var downloadBinder: DownloadService.DownloadBinder
-    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_PERMISSION_CODE);
-        }
         setContentView(R.layout.activity_main)
-        initView()
-        initPermission()
         observe()
         PlayerManager.get().init()
         val intent = Intent(this, DownloadService::class.java)
         bindService(intent, connection, BIND_AUTO_CREATE)
-        start(object: IWakeupListener{
-            override fun onSuccess(word: String?, result: WakeUpResult?) {
-                when(word){
-                    "播放" -> PlayerManager.get().play()
-                    "暂停" -> PlayerManager.get().player?.pause()
-                    "上一首" -> PlayerManager.get().pre()
-                    "下一首" -> PlayerManager.get().next()
-                }
-            }
-
-            override fun onStop() {
-            }
-
-            override fun onError(errorCode: Int, errorMessge: String?, result: WakeUpResult?) {
-            }
-
-            override fun onASrAudio(data: ByteArray?, offset: Int, length: Int) {
-            }
-        })
-    }
-
-    private fun initView() {
-        mediaPlayer = MediaPlayer()
-        fragments.add(UnsplashPhotoFragment())
-        fragments.add(MusicFragment())
-        mDrawerLayout = findViewById(R.id.drawer_layout)
-        mDrawerLayout.setScrimColor(Color.TRANSPARENT)
-        cardView = findViewById(R.id.card_view)
-        mDrawerLayout.addDrawerListener(object : DrawerListener {
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-                val mContent = mDrawerLayout.getChildAt(0)
-                val scale = 1 - slideOffset
-                val rightScale = 0.8f + scale * 0.2f
-                val leftScale = 0.5f + slideOffset * 0.5f
-                drawerView.alpha = leftScale
-                drawerView.scaleX = leftScale
-                drawerView.scaleY = leftScale
-                mContent.pivotX = 0f
-                mContent.pivotY = (mContent.height / 2).toFloat()
-                mContent.scaleX = rightScale
-                mContent.scaleY = rightScale
-                mContent.translationX = drawerView.width * slideOffset
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-                cardView!!.radius = 20f
-            }
-
-            override fun onDrawerClosed(drawerView: View) {
-                cardView!!.radius = 0f
-            }
-
-            override fun onDrawerStateChanged(newState: Int) {}
-        })
-        initMap()
-        replaceFragment(0)
-    }
-
-    private fun initMap() {
-        val fragmentManager: FragmentManager = supportFragmentManager
-        val mapFragment = MenuFragment()
-        fragmentManager.beginTransaction().replace(R.id.nav_view, mapFragment).commit()
     }
 
     fun replaceFragment(index: Int) {
@@ -146,19 +70,6 @@ class MainActivity : BaseActivity(), EventListener {
         transaction.replace(R.id.container, fragments[index])
         transaction.addToBackStack(null)
         transaction.commit()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        @NonNull permissions: Array<String>,
-        @NonNull grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            for (i in permissions.indices) {
-                Log.i("MainActivity", "申请的权限为：" + permissions[i] + ",申请结果：" + grantResults[i])
-            }
-        }
     }
 
     private val connection: ServiceConnection = object : ServiceConnection {
@@ -209,6 +120,11 @@ class MainActivity : BaseActivity(), EventListener {
         })
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        val fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.main_fragment)
+        return NavHostFragment.findNavController(fragment!!).navigateUp()
+    }
+
     private fun observe() {
         viewModel.snackBarText.observe(this, {
             it.getContentIfNotHandled().let { text ->
@@ -223,33 +139,6 @@ class MainActivity : BaseActivity(), EventListener {
         })
     }
 
-    /**
-     * android 6.0 以上需要动态申请权限
-     */
-    private fun initPermission() {
-        val permissions = arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        val toApplyList = ArrayList<String>()
-        for (perm in permissions) {
-            if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(
-                    this,
-                    perm
-                )
-            ) {
-                toApplyList.add(perm)
-                // 进入到这里代表没有权限.
-            }
-        }
-        val tmpList = arrayOfNulls<String>(toApplyList.size)
-        if (toApplyList.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123)
-        }
-    }
-
     override fun finish() {
         super.finish()
         unbindService(connection)
@@ -260,5 +149,4 @@ class MainActivity : BaseActivity(), EventListener {
     companion object {
         val NOTIFICATION_MUSIC = 2
     }
-
 }
