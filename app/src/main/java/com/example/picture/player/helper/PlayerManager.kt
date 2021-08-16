@@ -73,10 +73,6 @@ class PlayerManager {
         this.position = SPUtils.getInstance().getInt("position", 0)
         this.player = MediaPlayer()
         this.player!!.reset()
-        this.player!!.setDataSource(playList[position].url)
-        this.player!!.prepare()
-        this.player!!.start()
-        this.player!!.pause()
         this.player!!.setOnCompletionListener { next()}
         this.player!!.setOnErrorListener { _, _, _ -> true }
         return this

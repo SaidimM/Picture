@@ -6,6 +6,7 @@ import android.os.Binder
 import android.os.Environment
 import android.os.IBinder
 import com.example.picture.R
+import com.example.picture.main.data.DownloadBean
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.utils.ConcurrentDownLoad
 import org.jetbrains.anko.doAsync
@@ -23,23 +24,19 @@ class DownloadService : Service() {
     }
 
     inner class DownloadBinder : Binder() {
-        fun startDownload(photo: UnsplashPhoto, downloadStatus: DownloadStatus) {
+        fun startDownload(bean: DownloadBean, downloadStatus: DownloadStatus) {
             this@DownloadService.downloadStatus = downloadStatus
-            val fileName = photo.user.name + " " + if (photo.description == null) photo.id else photo.description + ".jpg"
             doAsync {
                 ConcurrentDownLoad
                     .builder()
                     // 设置URL
-                    .setUrl(photo.urls.raw)
+                    .setUrl(bean.link)
                     // 设置线程每次请求的块大小 (5M)
                     .setBlockSize(1024L * 5)
                     // 设置线程数量
                     .setThreadCount(5)
                     // 设置保存路径
-                    .setPath(
-                        Environment.getExternalStorageDirectory().absolutePath +
-                                "/Download/picture/" + fileName
-                    )
+                    .setPath(bean.path)
                     // 设置存在是否删除(如果设置 setKeepOnIfDisconnect(true) 则失效)
                     .setDeleteIfExist(true)
                     // 是否支持断点下载
@@ -50,10 +47,11 @@ class DownloadService : Service() {
                     .start { msg, total, current, speed ->
                         if (total == 0L) return@start
                         getNotification((current * 100 / total).toInt())
-                        downloadStatus.state(photo, msg, total, current, speed)
+                        downloadStatus.state(bean, msg, total, current, speed)
                         if (total == current) {
                             getNotificationManager().cancel(1)
-                            downloadStatus.finish(photo)
+                            if (bean.state != bean.COMPLETE) downloadStatus.finish(bean)
+                            bean.state = bean.COMPLETE
                         }
                     }
             }
@@ -89,7 +87,11 @@ class DownloadService : Service() {
 
 
     interface DownloadStatus {
-        fun state(photo: UnsplashPhoto, msg: String, total: Long, current: Long, speed: Long)
-        fun finish(photo: UnsplashPhoto)
+        fun state(bean: DownloadBean, msg: String, total: Long, current: Long, speed: Long)
+        fun finish(bean: DownloadBean)
+    }
+
+    companion object{
+        val DOWNLOAD_FILE = "com.example.picture.photo.ui.service.DOWNLOAD_FILE"
     }
 }

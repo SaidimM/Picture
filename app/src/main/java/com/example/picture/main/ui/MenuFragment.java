@@ -67,8 +67,7 @@ public class MenuFragment extends Fragment {
             MainActivity activity = (MainActivity) getActivity();
             assert activity != null;
             DrawerLayout mDrawerLayout = activity.findViewById(R.id.drawer_layout);
-            mDrawerLayout.closeDrawer(Gravity.START, true);
-            activity.replaceFragment(position);
+            mDrawerLayout.closeDrawer(Gravity.LEFT, true);
         });
     }
 }

@@ -32,6 +32,7 @@
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/container"
                     app:defaultNavHost="true"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
                     app:navGraph="@navigation/navigation_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -40,11 +41,16 @@
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <FrameLayout
+        <!--navigation -->
+        <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
             android:layout_gravity="start"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:headerLayout="@layout/main_nav_header"
+            app:itemIconTint="@drawable/drawer_item_color"
+            app:itemTextColor="@drawable/drawer_item_color"
+            app:menu="@menu/drawer_actions"
             android:fitsSystemWindows="true" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
