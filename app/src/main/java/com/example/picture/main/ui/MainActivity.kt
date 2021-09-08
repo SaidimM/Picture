@@ -13,13 +13,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
-import com.example.picture.base.ui.navigation.NavHostFragment
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.main.state.MainActivityViewModel
 import com.example.picture.photo.data.UnsplashPhoto
@@ -29,6 +29,7 @@ import com.example.picture.player.ui.PlayerServer
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 import java.util.*
 
 
@@ -41,12 +42,10 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         observe()
         setupNavigationDrawer()
-        val naviController : NavController = findNavController(R.id.container)
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.main_fragment_dest, R.id.music_fragment_dest).setDrawerLayout(mDrawerLayout).build()
-        setupActionBarWithNavController(naviController,appBarConfiguration)
+        val naviController: NavController = (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment).navController
+        appBarConfiguration = AppBarConfiguration.Builder(R.id.main_fragment, R.id.music_fragment).setDrawerLayout(mDrawerLayout).build()
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(naviController)
         PlayerManager.get().init()
         val intent = Intent(this, DownloadService::class.java)
@@ -79,23 +78,23 @@ class MainActivity : BaseActivity() {
 
     private fun setupNavigationDrawer() {
         mDrawerLayout = (findViewById<DrawerLayout>(R.id.drawer_layout))
-            .apply {
-                setStatusBarBackground(R.color.transparent)
-            }
+                .apply {
+                    setStatusBarBackground(R.color.transparent)
+                }
     }
 
     private fun observe() {
-        viewModel.snackBarText.observe(this, {
+        viewModel.snackBarText.observe(this) {
             it.getContentIfNotHandled().let { text ->
                 if (text == null) return@let
                 Snackbar.make(coordinator, getString(text), Snackbar.LENGTH_LONG).setAction(
-                    "点击"
+                        "点击"
                 ) { Log.e("=====>>>>", "点击了啊") }.setDuration(3000).show()
             }
-        })
-        viewModel.openDrawer.observe(this, {
+        }
+        viewModel.openDrawer.observe(this) {
             mDrawerLayout.openDrawer(GravityCompat.START)
-        })
+        }
     }
 
     override fun finish() {

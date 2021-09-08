@@ -63,8 +63,6 @@ class UnsplashPhotoAdapter constructor(
             holder.itemView.setBackgroundColor(Color.parseColor(photo.color))
             val requestOptions = RequestOptions()
                 .error(ColorDrawable(Color.GRAY))
-                .placeholder(ImageUtils.bitmap2Drawable(ImageUtils.returnBitmap(photo.urls.small)))
-                .transform(BlurTransformation(context, 10f), BlackWhiteTransformation())
             Glide.with(context).load(photo.urls.regular).apply(requestOptions).into(holder.imageView)
             // photograph name
             holder.txtView.text = photo.user.name
