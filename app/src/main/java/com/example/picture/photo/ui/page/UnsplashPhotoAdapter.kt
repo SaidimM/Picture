@@ -5,31 +5,27 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.picture.R
-import com.example.picture.base.utils.ImageUtils
-import com.example.picture.main.data.DownloadBean
+import com.example.picture.main.data.bean.Download
 import com.example.picture.main.ui.MainActivity
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.service.DownloadService
 import com.example.picture.photo.ui.state.UnsplashPickerViewModel
-import com.example.picture.photo.utils.BlackWhiteTransformation
-import com.example.picture.photo.utils.BlurTransformation
 import com.google.android.material.snackbar.Snackbar
 import com.unsplash.pickerandroid.photopicker.presentation.AspectRatioImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_unsplash_photo.view.*
+import org.jetbrains.anko.doAsync
 
 /**
  * The photos recycler view adapter.
@@ -90,16 +86,18 @@ class UnsplashPhotoAdapter constructor(
             holder.download.setOnClickListener {
                 viewModel.download(photo)
                 val path = MainActivity.PICTURE_DOWNLOAD_PATH + photo.user.name + " " + if (photo.description == null) photo.id else photo.description + ".jpg"
-                val downloadBean = DownloadBean(photo.id, 2, photo.urls.raw!!,0, path)
-                downloadBean.type = downloadBean.PHOTO
+                val downloadBean = Download(1, photo.urls.raw!!,1, path,0, photo.id, System.currentTimeMillis().toString())
                 val intent = Intent(context, DownloadService::class.java)
                 intent.action = DownloadService.DOWNLOAD_FILE
                 intent.putExtra("bean", downloadBean)
+                doAsync {
+                    (context as MainActivity).database.getDownLoadDao().add(downloadBean)
+                }
                 context.startService(intent)
                 (context as MainActivity).downloadBinder.startDownload(downloadBean, object: DownloadService.DownloadStatus{
-                    override fun state(bean: DownloadBean, msg: String, total: Long, current: Long, speed: Long) {}
+                    override fun state(bean: Download, msg: String, total: Long, current: Long, speed: Long) {}
 
-                    override fun finish(bean: DownloadBean) {
+                    override fun finish(bean: Download) {
                         Snackbar.make(context.coordinator, "completed..", 2000).setAction("check") {
                             val intent2 = Intent(Intent.ACTION_VIEW)
                             val uri = Uri.parse(
