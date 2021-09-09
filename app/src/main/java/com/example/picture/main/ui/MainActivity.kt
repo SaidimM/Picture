@@ -41,7 +41,6 @@ class MainActivity : BaseActivity() {
     private lateinit var mDrawerLayout: DrawerLayout
     lateinit var downloadBinder: DownloadService.DownloadBinder
     private lateinit var appBarConfiguration: AppBarConfiguration
-    lateinit var database: MyDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +50,6 @@ class MainActivity : BaseActivity() {
         appBarConfiguration = AppBarConfiguration.Builder(R.id.main_fragment, R.id.music_fragment).setDrawerLayout(mDrawerLayout).build()
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(naviController)
         PlayerManager.get().init()
-        database = Room.databaseBuilder(this, MyDatabase::class.java, "picture").build()
         val intent = Intent(this, DownloadService::class.java)
         bindService(intent, connection, BIND_AUTO_CREATE)
     }

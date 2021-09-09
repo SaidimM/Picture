@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.example.picture.R
+import com.example.picture.main.data.MyDatabase
 import com.example.picture.main.data.bean.Download
+import com.example.picture.main.data.repository.DownloadRepository
 import com.example.picture.photo.utils.ConcurrentDownLoad
 import org.jetbrains.anko.doAsync
 
@@ -46,10 +48,11 @@ class DownloadService : Service() {
                         if (total == 0L) return@start
                         getNotification((current * 100 / total).toInt())
                         downloadStatus.state(bean, msg, total, current, speed)
-                        if (total == current) {
+                        if (total == current && bean.state != 5) {
                             getNotificationManager().cancel(1)
-                            if (bean.state != 5) downloadStatus.finish(bean)
+                            downloadStatus.finish(bean)
                             bean.state = 5
+                            DownloadRepository.get().update(bean)
                         }
                     }
             }

@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.picture.R
+import com.example.picture.base.utils.SPUtils
+import com.example.picture.main.data.MyDatabase
 import com.example.picture.main.data.bean.Download
+import com.example.picture.main.data.repository.DownloadRepository
 import com.example.picture.main.ui.MainActivity
 import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.service.DownloadService
@@ -86,13 +89,20 @@ class UnsplashPhotoAdapter constructor(
             holder.download.setOnClickListener {
                 viewModel.download(photo)
                 val path = MainActivity.PICTURE_DOWNLOAD_PATH + photo.user.name + " " + if (photo.description == null) photo.id else photo.description + ".jpg"
-                val downloadBean = Download(1, photo.urls.raw!!,1, path,0, photo.id, System.currentTimeMillis().toString())
+                val downloadBean = Download()
+                downloadBean.apply {
+                    type = 1
+                    link = photo.urls.raw!!
+                    state = 1
+                    this.path = path
+                    userID = SPUtils.getInstance().getInt("user_id")
+                    fileID = photo.id
+                    createdTime = System.currentTimeMillis().toString()
+                }
                 val intent = Intent(context, DownloadService::class.java)
                 intent.action = DownloadService.DOWNLOAD_FILE
                 intent.putExtra("bean", downloadBean)
-                doAsync {
-                    (context as MainActivity).database.getDownLoadDao().add(downloadBean)
-                }
+                DownloadRepository.get().add(downloadBean)
                 context.startService(intent)
                 (context as MainActivity).downloadBinder.startDownload(downloadBean, object: DownloadService.DownloadStatus{
                     override fun state(bean: Download, msg: String, total: Long, current: Long, speed: Long) {}
