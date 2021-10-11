@@ -3,7 +3,6 @@ package com.example.picture.main.ui
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.IBinder
@@ -11,18 +10,14 @@ import android.util.Log
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.picture.BR
 import com.example.picture.R
 import com.example.picture.base.dataBindings.DataBindingConfig
-import com.example.picture.base.ui.navigation.NavHostFragment
 import com.example.picture.base.ui.page.BaseActivity
 import com.example.picture.main.state.MainActivityViewModel
-import com.example.picture.photo.data.UnsplashPhoto
 import com.example.picture.photo.ui.service.DownloadService
 import com.example.picture.player.helper.PlayerManager
 import com.example.picture.player.ui.PlayerServer
@@ -44,10 +39,12 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         observe()
         setupNavigationDrawer()
-        val naviController : NavController = findNavController(R.id.container)
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.main_fragment_dest, R.id.music_fragment_dest).setDrawerLayout(mDrawerLayout).build()
-        setupActionBarWithNavController(naviController,appBarConfiguration)
-        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(naviController)
+        val navHostFragment: NavHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+        val navController = navHostFragment.navController
+        appBarConfiguration = AppBarConfiguration.Builder(R.id.main_fragment, R.id.music_fragment)
+            .setDrawerLayout(mDrawerLayout).build()
+        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
         PlayerManager.get().init()
         val intent = Intent(this, DownloadService::class.java)
         bindService(intent, connection, BIND_AUTO_CREATE)
