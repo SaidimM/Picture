@@ -6,6 +6,7 @@ buildscript {
         navigationVersion = "2.3.5"
         espressoVersion = '3.4.0'
         roomVersion = '2.3.0'
+        anko_version = '0.10.5'
     }
     repositories {
         google()
@@ -15,7 +16,7 @@ buildscript {
         maven{ url 'https://maven.aliyun.com/repository/jcenter'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         //navigation safe args

@@ -3,11 +3,11 @@ package com.example.picture.photo.ui.service
 import android.app.*
 import android.content.Intent
 import android.os.Binder
-import android.os.Environment
 import android.os.IBinder
 import com.example.picture.R
-import com.example.picture.main.data.DownloadBean
-import com.example.picture.photo.data.UnsplashPhoto
+import com.example.picture.main.data.MyDatabase
+import com.example.picture.main.data.bean.Download
+import com.example.picture.main.data.repository.DownloadRepository
 import com.example.picture.photo.utils.ConcurrentDownLoad
 import org.jetbrains.anko.doAsync
 
@@ -24,7 +24,7 @@ class DownloadService : Service() {
     }
 
     inner class DownloadBinder : Binder() {
-        fun startDownload(bean: DownloadBean, downloadStatus: DownloadStatus) {
+        fun startDownload(bean: Download, downloadStatus: DownloadStatus) {
             this@DownloadService.downloadStatus = downloadStatus
             doAsync {
                 ConcurrentDownLoad
@@ -48,10 +48,11 @@ class DownloadService : Service() {
                         if (total == 0L) return@start
                         getNotification((current * 100 / total).toInt())
                         downloadStatus.state(bean, msg, total, current, speed)
-                        if (total == current) {
+                        if (total == current && bean.state != 5) {
                             getNotificationManager().cancel(1)
-                            if (bean.state != bean.COMPLETE) downloadStatus.finish(bean)
-                            bean.state = bean.COMPLETE
+                            downloadStatus.finish(bean)
+                            bean.state = 5
+                            DownloadRepository.get().update(bean)
                         }
                     }
             }
@@ -87,8 +88,8 @@ class DownloadService : Service() {
 
 
     interface DownloadStatus {
-        fun state(bean: DownloadBean, msg: String, total: Long, current: Long, speed: Long)
-        fun finish(bean: DownloadBean)
+        fun state(bean: Download, msg: String, total: Long, current: Long, speed: Long)
+        fun finish(bean: Download)
     }
 
     companion object{
